@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+</head>
+<body>
+
+<form action="saveFile" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <p>저장하는거</p>
+    <input type="file" id="myFileSave" name="file">
+    <input type="submit">
+</form>
+
+
+<form action='saveMultiFile' method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <p>다중업로드</p>
+    <input type="file"  name="files"> <br>
+    <input type="file"  name="files"> <br>
+    <input type="file"  name="files"> <br>
+    <input type="submit">
+</form>
+<br>
+
+
+<form action='uploadSpecificForm' method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <p>특정확장자만 저장</p>
+    <input type="file" id="myFileSpecific" name="file">
+    <input type="submit">
+</form>
+<br>
+
+
+<!--<form action="saveFile" method="post" enctype="multipart/form-data">-->
+<form id='uploadForm' action="readFile" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+    <p>화면에 보여주는거</p>
+    <input type="file" id="myFile" name="file">
+    <input type="submit">
+</form>
+<br>
+<br>
+<a href="/tolist">DB에 저장되어있는 목록</a>
+<br>
+<pre>
+    <p th:text="${fileContent}"></p>
+</pre>
+
+</body>
+</html>

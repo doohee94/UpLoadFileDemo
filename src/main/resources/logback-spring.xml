@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration debug="true">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 로거 -->
+    <logger name="board" level="DEBUG" appender-ref="STDOUT"/>
+    <logger name="jdbc.sqlonly" level="INFO" />
+
+    <logger name="jdbc.resultsettable" level="DEBUG"/>
+
+    <!-- 루트 로거 -->
+    <root level="debug">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+
+
+</configuration>

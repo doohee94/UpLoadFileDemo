@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:postgresql://localhost:5432/testDB
+    username: postgres
+    password: test
+
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+  thymeleaf:
+    check-template-location: true
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: LEGACYHTML5
+    encoding: UTF-8
+    cache: false
+
+    servlet:
+      multipart:
+        location: C:/Temp
+        max-file-size: 1MB #최대사이즈
+        max-request-size: 1MB #요청의 최대 사이즈
