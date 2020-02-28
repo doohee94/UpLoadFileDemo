@@ -276,6 +276,7 @@ public class UploadFileController {
 
         List<PersonEntity> personList = fileUploadService.getPersonList();
 
+        mv.addObject("selectedPerson",personId);
         mv.addObject("fileList",fileList);
         mv.addObject("personList",personList);
 
