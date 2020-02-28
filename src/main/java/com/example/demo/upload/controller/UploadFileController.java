@@ -1,5 +1,6 @@
 package com.example.demo.upload.controller;
 
+import com.example.demo.upload.entity.PersonEntity;
 import com.example.demo.upload.entity.SaveStatus;
 import com.example.demo.upload.service.FileUploadService;
 import org.apache.commons.io.FilenameUtils;
@@ -53,6 +54,7 @@ public class UploadFileController {
         fileEntity.setFileFakeName(destinationFileName);
         fileEntity.setAttachmentUrl("C:/uploadedFile/" + destinationFileName);
         fileEntity.setSaveStatus(SaveStatus.UPLOADED);
+        fileEntity.setPersonEntity(new PersonEntity((int)Math.random()*10));
         fileUploadService.saveFile(fileEntity);
 
         return "redirect:main";
@@ -78,6 +80,7 @@ public class UploadFileController {
             fileEntity.setFileFakeName(destinationFileName);
             fileEntity.setAttachmentUrl("C:/uploadedFile/" + destinationFileName);
             fileEntity.setSaveStatus(SaveStatus.UPLOADED);
+            fileEntity.setPersonEntity(new PersonEntity((int)(Math.random()*10)+1));
             fileUploadService.saveFile(fileEntity);
         }
 
@@ -254,9 +257,33 @@ public class UploadFileController {
             throw new Exception("저장된 파일 없음");
         }
 
-
-
         return "redirect:tolist";
     }
+
+
+    //한사람당 가지고 있는 파일 목록 가져오기
+    @RequestMapping(value = "/personFileList{personId}")
+    public ModelAndView getPersonFileList(@PathVariable int personId) throws Exception{
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("personPage");
+
+        List<FileEntity> fileList = null;
+        if(personId ==0){
+            fileList = fileUploadService.getAllFileList();
+        }else {
+            fileList = fileUploadService.getFileListByPersonId(personId);
+        }
+
+        List<PersonEntity> personList = fileUploadService.getPersonList();
+
+        mv.addObject("fileList",fileList);
+        mv.addObject("personList",personList);
+
+        return mv;
+    }
+
+
+
+
 
 }

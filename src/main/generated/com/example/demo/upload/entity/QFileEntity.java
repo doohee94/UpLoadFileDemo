@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -16,6 +17,8 @@ import com.querydsl.core.types.Path;
 public class QFileEntity extends EntityPathBase<FileEntity> {
 
     private static final long serialVersionUID = 388096599L;
+
+    private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QFileEntity fileEntity = new QFileEntity("fileEntity");
 
@@ -31,18 +34,29 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
 
     public final NumberPath<Long> fileSize = createNumber("fileSize", Long.class);
 
+    public final QPersonEntity personEntity;
+
     public final EnumPath<SaveStatus> saveStatus = createEnum("saveStatus", SaveStatus.class);
 
     public QFileEntity(String variable) {
-        super(FileEntity.class, forVariable(variable));
+        this(FileEntity.class, forVariable(variable), INITS);
     }
 
     public QFileEntity(Path<? extends FileEntity> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QFileEntity(PathMetadata metadata) {
-        super(FileEntity.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QFileEntity(PathMetadata metadata, PathInits inits) {
+        this(FileEntity.class, metadata, inits);
+    }
+
+    public QFileEntity(Class<? extends FileEntity> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.personEntity = inits.isInitialized("personEntity") ? new QPersonEntity(forProperty("personEntity")) : null;
     }
 
 }

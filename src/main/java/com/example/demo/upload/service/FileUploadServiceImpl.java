@@ -1,12 +1,15 @@
 package com.example.demo.upload.service;
 
 import com.example.demo.upload.entity.FileEntity;
+import com.example.demo.upload.entity.PersonEntity;
 import com.example.demo.upload.entity.SaveStatus;
 import com.example.demo.upload.repository.FileUploadRepository;
 import com.example.demo.upload.repository.FileUploadRepositorySupport;
+import com.example.demo.upload.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +18,8 @@ public class FileUploadServiceImpl implements FileUploadService{
 
     @Autowired
     FileUploadRepository fileUploadRepository;
-
+    @Autowired
+    PersonRepository personRepository;
     @Autowired
     FileUploadRepositorySupport fileUploadRepositorySupport;
 
@@ -28,6 +32,11 @@ public class FileUploadServiceImpl implements FileUploadService{
     public List<FileEntity> getFileList() throws Exception {
         List<FileEntity> test = fileUploadRepository.findBySaveStatus(SaveStatus.UPLOADED);
         return test;
+    }
+
+    @Override
+    public List<FileEntity> getAllFileList() throws Exception {
+        return fileUploadRepository.findAll();
     }
 
     @Override
@@ -54,4 +63,19 @@ public class FileUploadServiceImpl implements FileUploadService{
     public void changeStatus(FileEntity fileEntity) throws Exception {
         fileUploadRepository.save(fileEntity);
     }
+
+    @Override
+    public List<FileEntity> getFileListByPersonId(int personId) throws Exception {
+        Optional<PersonEntity> optional = personRepository.findById(personId);
+        PersonEntity personEntity =optional.get();
+        List<FileEntity> list = personEntity.getFileEntity();
+        return list;
+    }
+
+    @Override
+    public List<PersonEntity> getPersonList() throws Exception {
+        return personRepository.findAll();
+    }
+
+
 }

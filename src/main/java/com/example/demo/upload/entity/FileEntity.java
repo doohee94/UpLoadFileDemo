@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-
+import java.util.Optional;
 
 
 @Entity
@@ -20,8 +20,8 @@ public class FileEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int fileIdx;
 
-    @ManyToOne
-    @JoinColumn(name = "personId")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "person_id")
     private PersonEntity personEntity;
 
     private String fileName;

@@ -2,47 +2,59 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>ListPage</title>
+    <title>personPage</title>
     <link rel="stylesheet" th:href="@{/style.css}"/>
 </head>
 <body>
 
 <h2>파일 리스트</h2>
+<select name ="persons" id="persons">
+    <option value="0">ALL</option>
+    <option th:each = "person : ${personList}" th:value="${person.personId}" th:text = ${person.personId}></option>
+</select>
+
 <table class="board_list">
     <colgroup>
-        <col width="15%"/>
+        <col width="10%"/>
+        <col width="10%"/>
         <col width="*"/>
+        <col width="15%"/>
         <col width="15%"/>
         <col width="20%"/>
     </colgroup>
     <thead>
     <tr>
         <th scope="col">파일 번호</th>
+        <th scope="col">회원 번호</th>
         <th scope="col">파일 이름</th>
         <th scope="col">다운받기</th>
         <th scope="col">삭제</th>
-        <th scope="col">상태변경</th>
+        <th scope="col">상태</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:if="${#lists.size(list)} > 0" th:each="list : ${list}">
-        <td th:text="${list.fileIdx}" id="fileIdx" th:value="${list.fileIdx}"></td>
+    <tr th:if="${#lists.size(list)} > 0" th:each="list : ${fileList}">
+        <td th:text="${list.fileIdx}" id="fileIdx" th:value="${list.fileIdx}" style="text-align: center"></td>
+        <td th:text="${list.personEntity.personId}" id="personId"  th:value="${list.personEntity.personId}" style="text-align: center"></td>
         <td class="title" ><a href="/read" th:attrappend="href=${list.fileIdx}" th:text="${list.fileName}" ></a></td>
         <td class="title" style="text-align: center"><a href="/download" th:attrappend="href=${list.fileIdx}" th:text="다운받기" class="btn"></a></td>
         <td class="title" style="text-align: center"><a href="/delete" th:attrappend="href=${list.fileIdx}" th:text="삭제하기" class="btn"></a></td>
-        <td class="title" style="text-align: center"><a href="/changeStatus" th:attrappend="href=${list.fileIdx}" th:text="상태변경" class="btn"></a></td>
+        <td class="title" style="text-align: center" th:text="${list.saveStatus}"></td>
 
     </tr>
-
     </tbody>
-
 </table>
+
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript">
-
+    $("#persons").change(function () {
+        var personId = $(this).val();
+        location.href = '/personFileList'+personId;
+    })
 
 
 </script>
+
 
 </html>

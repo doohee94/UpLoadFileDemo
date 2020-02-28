@@ -1,6 +1,7 @@
 package com.example.demo.upload.repository;
 
 import com.example.demo.upload.entity.FileEntity;
+import com.example.demo.upload.entity.PersonEntity;
 import com.example.demo.upload.entity.SaveStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -4,10 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,11 +16,15 @@ import java.util.List;
 public class PersonEntity {
 
     @Id
-    private String personId;
+    @Column(name="person_id")
+    private int personId;
 
-    @OneToMany
-    private List<FileEntity> fileEntityList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personEntity") //mappedBy는 컬럼명이 아니라 엔티티들 이름으로....
+    private List<FileEntity> fileEntity ;
 
+    public PersonEntity(int personId) {
+        this.personId = personId;
+    }
 
 
 }
