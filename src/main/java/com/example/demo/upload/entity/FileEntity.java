@@ -1,6 +1,5 @@
 package com.example.demo.upload.entity;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +19,10 @@ public class FileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int fileIdx;
+
+    @ManyToOne
+    @JoinColumn(name = "personId")
+    private PersonEntity personEntity;
 
     private String fileName;
 
