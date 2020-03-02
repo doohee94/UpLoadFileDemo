@@ -7,6 +7,8 @@ import com.example.demo.upload.repository.FileUploadRepository;
 import com.example.demo.upload.repository.FileUploadRepositorySupport;
 import com.example.demo.upload.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,8 +31,8 @@ public class FileUploadServiceImpl implements FileUploadService{
     }
 
     @Override
-    public List<FileEntity> getFileList() throws Exception {
-        List<FileEntity> test = fileUploadRepository.findBySaveStatus(SaveStatus.UPLOADED);
+    public List<FileEntity> getFileList(Pageable pageable) throws Exception {
+        List<FileEntity> test = fileUploadRepository.findBySaveStatus(SaveStatus.UPLOADED,pageable);
         return test;
     }
 
@@ -50,8 +52,6 @@ public class FileUploadServiceImpl implements FileUploadService{
         }else{
             throw new NullPointerException();
         }
-
-
     }
 
     @Override
