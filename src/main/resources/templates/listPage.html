@@ -25,7 +25,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:if="${#lists.size(list)} > 0" th:each="list : ${list}">
+    <tr th:if="${#lists.size(list)} > 0" th:each="list : ${page}">
         <td th:text="${list.fileIdx}" id="fileIdx" th:value="${list.fileIdx}"></td>
         <td class="title" ><a href="/read" th:attrappend="href=${list.fileIdx}" th:text="${list.fileName}" ></a></td>
         <td class="title" style="text-align: center"><a href="/download" th:attrappend="href=${list.fileIdx}" th:text="다운받기" class="btn"></a></td>
@@ -37,7 +37,6 @@
     </tbody>
 
 </table>
-
 
 <a href="/tolist?page=0">1</a>
 <a href="/tolist?page=1">2</a>

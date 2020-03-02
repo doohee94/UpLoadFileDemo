@@ -7,6 +7,7 @@ import com.example.demo.upload.repository.FileUploadRepository;
 import com.example.demo.upload.repository.FileUploadRepositorySupport;
 import com.example.demo.upload.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,9 +31,9 @@ public class FileUploadServiceImpl implements FileUploadService{
         fileUploadRepository.save(fileEntity);
     }
 
-    @Override
-    public List<FileEntity> getFileList(Pageable pageable) throws Exception {
-        List<FileEntity> test = fileUploadRepository.findBySaveStatus(SaveStatus.UPLOADED,pageable);
+        @Override
+    public Page<FileEntity> getFileList(Pageable pageable) throws Exception {
+        Page<FileEntity> test = fileUploadRepository.findBySaveStatus(SaveStatus.UPLOADED,pageable);
         return test;
     }
 

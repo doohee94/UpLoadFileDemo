@@ -6,6 +6,7 @@ import com.example.demo.upload.service.FileUploadService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -145,11 +146,10 @@ public class UploadFileController {
     @RequestMapping(value = "/tolist")
     public ModelAndView getFileList(@PageableDefault(sort = {"fileIdx"}, direction = Sort.Direction.ASC, size = 3) Pageable pageable) throws Exception {
         ModelAndView mv = new ModelAndView();
-
         mv.setViewName("listPage");
-        List<FileEntity> list = fileUploadService.getFileList(pageable);
 
-        mv.addObject("list", list);
+        Page<FileEntity> page = fileUploadService.getFileList(pageable);
+        mv.addObject("page", page);
 
         return mv;
     }
