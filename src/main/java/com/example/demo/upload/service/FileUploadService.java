@@ -18,5 +18,5 @@ public interface FileUploadService {
     void changeStatus(FileEntity fileEntity) throws Exception;
     List<FileEntity> getFileListByPersonId(int personId) throws Exception;
     List<PersonEntity> getPersonList()throws  Exception;
-
+    FileEntity getFileByFileFakeName(String fileName)throws Exception;
 }

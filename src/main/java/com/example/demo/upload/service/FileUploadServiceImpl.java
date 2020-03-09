@@ -78,5 +78,10 @@ public class FileUploadServiceImpl implements FileUploadService{
         return personRepository.findAll();
     }
 
+    @Override
+    public FileEntity getFileByFileFakeName(String fileFakeName) throws Exception {
+        return fileUploadRepository.findByFileFakeName(fileFakeName);
+    }
+
 
 }

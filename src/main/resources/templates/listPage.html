@@ -37,10 +37,10 @@
     </tbody>
 
 </table>
-
-<a href="/tolist?page=0">1</a>
-<a href="/tolist?page=1">2</a>
-<a href="/tolist?page=2">3</a>
+<a href="/tolist?page=" th:attrappend="href=${page.first}">맨 처음 페이지</a><br>
+<a href="/tolist?page=" th:attrappend="href=${page.number-1}">이전페이지</a><br>
+<a href="/tolist?page=" th:attrappend="href=${page.number+1}">다음페이지</a><br>
+<a href="/tolist?page=" th:attrappend="href=${page.last}">맨 마지막페이지</a><br>
 
 
 </body>
