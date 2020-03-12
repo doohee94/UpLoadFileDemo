@@ -27,7 +27,7 @@
     <tbody>
     <tr th:if="${#lists.size(list)} > 0" th:each="list : ${page}">
         <td th:text="${list.fileIdx}" id="fileIdx" th:value="${list.fileIdx}"></td>
-        <td class="title" ><a href="/read" th:attrappend="href=${list.fileIdx}" th:text="${list.fileName}" ></a></td>
+        <td class="title" ><a href="/annovar/annoSelect?" th:attrappend="href='dbType=ljb23_sift&fileIdx='+${list.fileIdx}"  th:text="${list.fileName}" ></a></td>
         <td class="title" style="text-align: center"><a href="/download" th:attrappend="href=${list.fileIdx}" th:text="다운받기" class="btn"></a></td>
         <td class="title" style="text-align: center"><a href="/delete" th:attrappend="href=${list.fileIdx}" th:text="삭제하기" class="btn"></a></td>
         <td class="title" style="text-align: center"><a href="/changeStatus" th:attrappend="href=${list.fileIdx}" th:text="상태변경" class="btn"></a></td>

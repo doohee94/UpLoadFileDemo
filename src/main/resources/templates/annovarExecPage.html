@@ -7,18 +7,19 @@
 <body>
 
 <select name="selectDB" id="selectDB">
-    <option value="0" th:selected="${id == 0}">SIFT</option>
-    <option value="1" th:selected="${id == 1}">PolyPhen2hvar</option>
-    <option value="2" th:selected="${id == 2}">refGeneAll</option>
-    <option value="3" th:selected="${id == 3}">refGeneExonic</option>
-    <option value="4" th:selected="${id == 4}">ClinVar</option>
-    <option value="5" th:selected="${id == 5}">1000Genome</option>
-    <option value="6" th:selected="${id == 6}">ExAC</option>
-    <option value="7" th:selected="${id == 7}">ESP6500</option>
+    <option value="ljb23_sift" th:selected="${dbType == 'ljb23_sift'}">SIFT</option>
+    <option value="ljb23_pp2hvar" th:selected="${dbType == 'ljb23_pp2hvar'}">PolyPhen2hvar</option>
+    <option value="refGeneAll" th:selected="${dbType == 'refGeneAll'}">refGeneAll</option>
+    <option value="refGeneExonic" th:selected="${dbType == 'refGeneExonic'}">refGeneExonic</option>
+    <option value="clinvar_20150629" th:selected="${dbType == 'clinvar_20150629'}">ClinVar</option>
+    <option value="1000g2015aug_all" th:selected="${dbType == '1000g2015aug_all'}">1000Genome</option>
+    <option value="exac03" th:selected="${dbType == 'exac03'}">ExAC</option>
+    <option value="esp6500si_all" th:selected="${dbType == 'esp6500si_all'}">ESP6500</option>
+    <option value="snp138" th:selected="${dbType == 'snp138'}">dbSNP</option>
+    <option value="All" th:selected="${dbType == 'All'}">All</option>
 </select>
 
 <input th:value=${fileIdx} type="hidden" id="fileIdx" name="fileIdx"></input>
-<input th:value=${id} type="hidden" id="id" name="id"></input>
 
 
 <table class="board_list" border="1">
@@ -35,79 +36,146 @@
     </thead>
 
     <tbody>
-    <div th:if="${#lists.size(list)} > 0 " th:each="list : ${list}">
-        <div th:if="not ${#maps.isEmpty(list.clinvarDescriptionMap)}">
-            <!-- clinvar로 table만들기-->
-            <tr  style="text-align: center">
-                <td rowspan="6" th:if="${list.annotationType} != null" th:text="${list.annotationType}"></td>
+    <div th:if="${dbType != 'All'}">
+        <div th:if="${#lists.size(list)} > 0 " th:each="list : ${list}">
+            <div th:if="not ${#maps.isEmpty(list.clinvarDescriptionMap)}">
+                <!-- clinvar로 table만들기-->
+                <tr style="text-align: center">
+                    <td rowspan="6" th:if="${list.annotationType} != null" th:text="${list.annotationType}"></td>
 
-                <td rowspan="6" th:if="${list.chromNum} != null" th:text="${list.chromNum}"></td>
-                <td rowspan="6" th:if="${list.start} != null" th:text="${list.start}"></td>
-                <td rowspan="6" th:if="${list.end} != null" th:text="${list.end}"></td>
-                <td rowspan="6" th:if="${list.ref} != null" th:text="${list.ref}"></td>
-                <td rowspan="6" th:if="${list.alt} != null" th:text="${list.alt}"></td>
+                    <td rowspan="6" th:if="${list.chromNum} != null" th:text="${list.chromNum}"></td>
+                    <td rowspan="6" th:if="${list.start} != null" th:text="${list.start}"></td>
+                    <td rowspan="6" th:if="${list.end} != null" th:text="${list.end}"></td>
+                    <td rowspan="6" th:if="${list.ref} != null" th:text="${list.ref}"></td>
+                    <td rowspan="6" th:if="${list.alt} != null" th:text="${list.alt}"></td>
+                    <td style="text-align: left">CLINSIG</td>
+                    <td th:text="${list.clinvarDescriptionMap.get('CLINSIG')}" style="text-align: left"></td>
+
+                </tr>
+
+                <tr>
+                    <td>CLNDBN</td>
+                    <td th:text="${list.clinvarDescriptionMap.get('CLNDBN')}"></td>
+                </tr>
+                <tr>
+                    <td>CLNREVSTAT</td>
+                    <td th:text="${list.clinvarDescriptionMap.get('CLNREVSTAT')}"></td>
+                </tr>
+                <tr>
+                    <td>CLNACC</td>
+                    <td th:text="${list.clinvarDescriptionMap.get('CLNACC')}"></td>
+                </tr>
+                <tr>
+                    <td>CLNDSDB</td>
+                    <td th:text="${list.clinvarDescriptionMap.get('CLNDSDB')}"></td>
+                </tr>
+                <tr>
+                    <td>CLNDSDBID</td>
+                    <td th:text="${list.clinvarDescriptionMap.get('CLNDSDBID')}"></td>
+                </tr>
+
+            </div>
+
+            <div th:unless="not ${#maps.isEmpty(list.clinvarDescriptionMap)}">
+                <tr th:if="${#lists.size(list)} > 0" th:each="list : ${list}" style="text-align: center">
+                    <td th:if="${list.annotationType} != null" th:text="${list.annotationType}"></td>
+                    <td th:if="${list.line} != null" th:text="${list.line}"></td>
+
+                    <td th:if="${list.clinvarDescription} != null">
+                        <div th:each="glist : ${list.geneList}" th:text="${glist}"></div>
+                    </td>
+
+                    <td th:if="${list.score} != -100 " th:text="${list.score}"></td>
+
+                    <td th:if="${list.geneType} != null" th:text="${list.geneType}"></td>
+                    <td th:if="${list.geneNames} != null">
+                        <div th:each="glist : ${list.geneList}" th:text="${glist}"></div>
+                    </td>
+                    <td th:if="${list.chromNum} != null" th:text="${list.chromNum}"></td>
+                    <td th:if="${list.start} != null" th:text="${list.start}"></td>
+                    <td th:if="${list.end} != null" th:text="${list.end}"></td>
+                    <td th:if="${list.ref} != null" th:text="${list.ref}"></td>
+                    <td th:if="${list.alt} != null" th:text="${list.alt}"></td>
+                    <td th:if="${list.t1} != null" th:text="${list.t1}"></td>
+                    <td th:if="${list.t2} != null" th:text="${list.t2}"></td>
+                    <td th:if="${list.t2} != null" th:text="${list.t3}"></td>
+                </tr>
+            </div>
+        </div>
+    </div><!-- dbType != All-->
+    <div th:unless="${dbType != 'All'}">
+        <div th:if="${#lists.size(list)} > 0 " th:each="list : ${list}">
+            <tr style="text-align: center">
+                <td rowspan="6" th:if="${list.refGeneAll.chromNum} != null" th:text="${list.refGeneAll.chromNum}"></td>
+
+                <td rowspan="6" th:if="${list.sift} != null" th:text="${list.sift.siftScore}"></td>
+                <td rowspan="6" th:if="${list.sift} == null" th:text="NA"></td>
+
+                <td rowspan="6" th:if="${list.polyPhen2hvar} != null" th:text="${list.polyPhen2hvar.hvarScore}"></td>
+                <td rowspan="6" th:if="${list.polyPhen2hvar} == null" th:text="NA"></td>
+
+                <td rowspan="6" th:if="${list.genome1000} != null" th:text="${list.genome1000.alleleFrequency}"></td>
+                <td rowspan="6" th:if="${list.genome1000} == null" th:text="NA"></td>
+
+                <td rowspan="6" th:if="${list.exac} != null" th:text="${list.exac.alleleFrequency}"></td>
+                <td rowspan="6" th:if="${list.exac} == null" th:text="NA"></td>
+
+                <td rowspan="6" th:if="${list.esp6500} != null" th:text="${list.esp6500.alleleFrequency}"></td>
+                <td rowspan="6" th:if="${list.esp6500} == null" th:text="NA"></td>
+
+                <td rowspan="6" th:if="${list.refGeneAll.geneType} != null" th:text="${list.refGeneAll.geneType}"></td>
+                <td rowspan="6" th:if="${list.refGeneAll.geneNames} != null">
+                    <div th:each="glist : ${list.refGeneAll.geneList}" th:text="${glist}"></div>
+                </td>
+
+                <td rowspan="6" th:if="${list.refGene} != null" th:text="${list.refGene.geneType}"></td>
+                <td rowspan="6" th:if="${list.refGene} == null" th:text="NA"></td>
+
+                <td rowspan="6" th:if="${list.refGene} != null">
+                    <div th:each="glist : ${list.refGene.geneList}" th:text="${glist}"></div>
+                </td>
+                <td rowspan="6" th:if="${list.refGene} == null" th:text="NA"></td>
+
+                <td rowspan="6" th:if="${list.refGeneAll.start} != null" th:text="${list.refGeneAll.start}"></td>
+                <td rowspan="6" th:if="${list.refGeneAll.end} != null" th:text="${list.refGeneAll.end}"></td>
+                <td rowspan="6" th:if="${list.refGeneAll.ref} != null" th:text="${list.refGeneAll.ref}"></td>
+                <td rowspan="6" th:if="${list.refGeneAll.alt} != null" th:text="${list.refGeneAll.alt}"></td>
                 <td style="text-align: left">CLINSIG</td>
-                <td th:text="${list.clinvarDescriptionMap.get('CLINSIG')}" style="text-align: left"></td>
-
+                <td th:if="${list.clinvar} != null" th:text="${list.clinvar.clinvarDescriptionMap.get('CLINSIG')}"
+                    style="text-align: left"></td>
+                <td th:if="${list.clinvar} == null" th:text="NA" style="text-align: left"></td>
             </tr>
 
-            <tr >
+            <tr>
                 <td>CLNDBN</td>
-                <td th:text="${list.clinvarDescriptionMap.get('CLNDBN')}"></td>
+                <td th:if="${list.clinvar} != null" th:text="${list.clinvar.clinvarDescriptionMap.get('CLNDBN')}"></td>
+                <td th:if="${list.clinvar} == null" th:text="NA" style="text-align: left"></td>
             </tr>
-            <tr >
+            <tr>
                 <td>CLNREVSTAT</td>
-                <td th:text="${list.clinvarDescriptionMap.get('CLNREVSTAT')}"></td>
+                <td th:if="${list.clinvar} != null" th:text="${list.clinvar.clinvarDescriptionMap.get('CLNREVSTAT')}"></td>
+                <td th:if="${list.clinvar} == null" th:text="NA" style="text-align: left"></td>
             </tr>
-            <tr >
+            <tr>
                 <td>CLNACC</td>
-                <td th:text="${list.clinvarDescriptionMap.get('CLNACC')}"></td>
+                <td th:if="${list.clinvar} != null" th:text="${list.clinvar.clinvarDescriptionMap.get('CLNACC')}"></td>
+                <td th:if="${list.clinvar} == null" th:text="NA" style="text-align: left"></td>
             </tr>
-            <tr >
+            <tr>
                 <td>CLNDSDB</td>
-                <td th:text="${list.clinvarDescriptionMap.get('CLNDSDB')}"></td>
+                <td th:if="${list.clinvar} != null" th:text="${list.clinvar.clinvarDescriptionMap.get('CLNDSDB')}"></td>
+                <td th:if="${list.clinvar} == null" th:text="NA" style="text-align: left"></td>
             </tr>
-            <tr >
+            <tr>
                 <td>CLNDSDBID</td>
-                <td th:text="${list.clinvarDescriptionMap.get('CLNDSDBID')}"></td>
+                <td th:if="${list.clinvar} != null" th:text="${list.clinvar.clinvarDescriptionMap.get('CLNDSDBID')}"></td>
+                <td th:if="${list.clinvar} == null" th:text="NA" style="text-align: left"></td>
             </tr>
-
         </div>
-
-        <div th:unless="not ${#maps.isEmpty(list.clinvarDescriptionMap)}">
-                    <tr th:if="${#lists.size(list)} > 0" th:each="list : ${list}" style="text-align: center">
-                        <td th:if="${list.annotationType} != null" th:text="${list.annotationType}"></td>
-                        <td th:if="${list.line} != null" th:text="${list.line}"></td>
-
-                        <td th:if="${list.clinvarDescription} != null">
-                            <div th:each="glist : ${list.geneList}" th:text="${glist}"></div>
-                        </td>
-
-                        <td th:if="${list.score} != -100 " th:text="${list.score}"></td>
-
-                        <td th:if="${list.geneType} != null" th:text="${list.geneType}"></td>
-                        <td th:if="${list.geneNames} != null">
-                            <div th:each="glist : ${list.geneList}" th:text="${glist}"></div>
-                        </td>
-                        <td th:if="${list.chromNum} != null" th:text="${list.chromNum}"></td>
-                        <td th:if="${list.start} != null" th:text="${list.start}"></td>
-                        <td th:if="${list.end} != null" th:text="${list.end}"></td>
-                        <td th:if="${list.ref} != null" th:text="${list.ref}"></td>
-                        <td th:if="${list.alt} != null" th:text="${list.alt}"></td>
-                    </tr>
-        </div>
-
     </div>
-
-
-
     </tbody>
 
 </table>
-
-<pre>
-    <p th:text="${fileContent}"></p>
-</pre>
 
 
 </body>
@@ -117,7 +185,14 @@
     $("#selectDB").change(function () {
         var selectDB = $(this).val();
         var fileIdx = $('#fileIdx').val();
-        location.href = '/annoSelect?id=' + selectDB + "&fileIdx=" + fileIdx;
+
+        if (selectDB == 'All') {
+            location.href = '/annovar/AllannoSelect?dbType=' + selectDB + "&fileIdx=" + fileIdx;
+
+        } else {
+            location.href = '/annovar/annoSelect?dbType=' + selectDB + "&fileIdx=" + fileIdx;
+
+        }
     })
 
 

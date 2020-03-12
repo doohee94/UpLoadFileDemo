@@ -1,17 +1,21 @@
 package com.example.demo.upload.entity.dto;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+@Getter
+@Builder
 public class TotalAnnotation {
-
+    String dbType;
     String annotationType;
 
     String clinvarDescription;//clinvar
 
+    @Builder.Default
     BigDecimal score = BigDecimal.valueOf(-100);//sift
 
     //refGene
@@ -31,122 +35,37 @@ public class TotalAnnotation {
     List<String> geneList;
     Map<String, String> clinvarDescriptionMap;
 
-    //Sift /polyphen / esp, exac, genome1000
-    public TotalAnnotation(String annotationType, BigDecimal score, String chromNum, long start, long end, String ref, String alt, String t1, String t2, String t3) {
-        this.annotationType = annotationType;
-        this.score = score;
-        this.chromNum = chromNum;
-        this.start = start;
-        this.end = end;
-        this.ref = ref;
-        this.alt = alt;
-        this.t1 = t1;
-        this.t2 = t2;
-        this.t3 = t3;
-    }
 
-    //refGene_exonic
-    public TotalAnnotation(String line, String geneType, String geneNames, String chromNum, long start, long end, String ref, String alt, String t1, String t2, String t3) {
-        this.line = line;
-        this.geneType = geneType;
-        this.geneNames = geneNames;
-        this.chromNum = chromNum;
-        this.start = start;
-        this.end = end;
-        this.ref = ref;
-        this.alt = alt;
-        this.t1 = t1;
-        this.t2 = t2;
-        this.t3 = t3;
-    }
+    //Builder Custom
+    public static class TotalAnnotationBuilder {
 
-    //clinvar / refGene all
-    public TotalAnnotation(String annotationType, String clinvarDescription, String chromNum, long start, long end, String ref, String alt, String t1, String t2, String t3) {
-        this.annotationType = annotationType;
-        this.clinvarDescription = clinvarDescription;
-        this.chromNum = chromNum;
-        this.start = start;
-        this.end = end;
-        this.ref = ref;
-        this.alt = alt;
-        this.t1 = t1;
-        this.t2 = t2;
-        this.t3 = t3;
-    }
+        public TotalAnnotationBuilder geneList(String geneNames) {
+            this.geneList = spiltList(geneNames, ",");
+            return this;
+        }
 
-    public void setGeneList(List<String> geneList) {
-        this.geneList = geneList;
-    }
+        public TotalAnnotationBuilder clinvarDescriptionMap(String geneNames) {
+            List<String> tempList = spiltList(geneNames, ";");
+            Map<String, String> map = new HashMap<>();
+            for (int j = 0; j < tempList.size(); j++) {
+                map.put(spiltList(tempList.get(j), "=").get(0), spiltList(tempList.get(j), "=").get(1));
+            }
+            this.clinvarDescriptionMap = map;
+            return this;
+        }
 
+        /**
+         * method
+         */
+        List<String> spiltList(String genes, String delimiter) {
+            List<String> list = new ArrayList<>();
+            StringTokenizer st = new StringTokenizer(genes, delimiter);
 
-    public Map<String, String> getClinvarDescriptionMap() {
-        return clinvarDescriptionMap;
-    }
+            while (st.hasMoreTokens()) {
+                list.add(st.nextToken());
+            }
+            return list;
+        }
 
-    public void setClinvarDescriptionMap(Map<String, String> clinvarDescriptionMap) {
-        this.clinvarDescriptionMap = clinvarDescriptionMap;
-    }
-
-    public String getAnnotationType() {
-        return annotationType;
-    }
-
-    public String getClinvarDescription() {
-        return clinvarDescription;
-    }
-
-    public BigDecimal getScore() {
-        return score;
-    }
-
-    public String getLine() {
-        return line;
-    }
-
-    public String getGeneType() {
-        return geneType;
-    }
-
-    public String getGeneNames() {
-        return geneNames;
-    }
-
-    public String getChromNum() {
-        return chromNum;
-    }
-
-    public long getStart() {
-        return start;
-    }
-
-    public long getEnd() {
-        return end;
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    public String getAlt() {
-        return alt;
-    }
-
-    public String getT1() {
-        return t1;
-    }
-
-    public String getT2() {
-        return t2;
-    }
-
-    public String getT3() {
-        return t3;
-    }
-
-    public List<String> getGeneList() {
-        return geneList;
-    }
-
-
-
+    }//end builder class
 }

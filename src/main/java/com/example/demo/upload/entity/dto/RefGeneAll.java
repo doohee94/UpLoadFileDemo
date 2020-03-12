@@ -2,18 +2,18 @@ package com.example.demo.upload.entity.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 @Getter
 @Builder
-public class Clinvar {
+public class RefGeneAll {
 
-    String annotationType;
-    String clinvarDescription;
-    Map<String, String> clinvarDescriptionMap;
+    String geneType;
+    String geneNames;
+    List<String> geneList;
     String chromNum;
     long start;
     long end;
@@ -23,17 +23,10 @@ public class Clinvar {
     String t2;
     String t3;
 
-    //Builder Custom
-    public static class ClinvarBuilder {
+    public static class RefGeneAllBuilder {
 
-
-        public Clinvar.ClinvarBuilder clinvarDescriptionMap(String geneNames) {
-            List<String> tempList = spiltList(geneNames, ";");
-            Map<String, String> map = new HashMap<>();
-            for (int j = 0; j < tempList.size(); j++) {
-                map.put(spiltList(tempList.get(j), "=").get(0), spiltList(tempList.get(j), "=").get(1));
-            }
-            this.clinvarDescriptionMap = map;
+        public RefGeneAll.RefGeneAllBuilder geneList(String geneNames) {
+            this.geneList = spiltList(geneNames, ",");
             return this;
         }
 

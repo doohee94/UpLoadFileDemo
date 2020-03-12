@@ -1,13 +1,20 @@
 package com.example.demo.upload.entity.dto;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+import java.math.BigDecimal;
+
+@Getter
+@Builder
 public class PolyPhen2hvar {
 
 
     String annotationType;
-    double hvarScore;
+    @Builder.Default
+    BigDecimal hvarScore= BigDecimal.valueOf(-100);
     String chromNum;
     long start;
     long end;
