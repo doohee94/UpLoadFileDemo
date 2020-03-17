@@ -185,10 +185,32 @@ public class AnnovarController {
             otherExtension = getOtherExtension(DBs);
             logExtension = getLogExtension(DBs);
             map = getAllMap(map, fileEntity.getFileFakeName(), extension, DBs);
+
         }//end
 
-
-        List<AllAnnotation> list = new ArrayList<>(map.values());
+        List<AllAnnotation> list = new ArrayList<>(map.values()); //원래꺼
+//
+//        List<AllAnnotation> list = new ArrayList<>(map.values())
+//                .stream()
+//                .filter(all -> all.getGenome1000() != null)
+//                .filter(all -> all.getExac() != null)
+//                .filter(all -> all.getEsp6500() != null)
+//                .filter(all -> all.getGenome1000().getAlleleFrequency().compareTo(BigDecimal.valueOf(0.01)) == -1) //기준보다 작은경우 -1/ 큰경우 1/ 같은경우 0
+//                .filter(all -> all.getExac().getAlleleFrequency().compareTo(BigDecimal.valueOf(0.01)) == -1)
+//                .filter(all -> all.getEsp6500().getAlleleFrequency().compareTo(BigDecimal.valueOf(0.01)) == -1)
+//                .collect(Collectors.toList());
+//
+//        Stream<AllAnnotation> t1 = list2.stream()
+//                .filter(all -> all.getGenome1000() != null)
+//                .filter(all -> all.getGenome1000().getAlleleFrequency().compareTo(BigDecimal.valueOf(0.01)) == -1);
+//
+//        Stream<AllAnnotation> t2 = t1
+//                .filter(all -> all.getExac() != null)
+//                .filter(all -> all.getExac().getAlleleFrequency().compareTo(BigDecimal.valueOf(0.01)) == -1);
+//
+//        Stream<AllAnnotation> t3 = t2
+//                .filter(all -> all.getEsp6500() != null)
+//                .filter(all ->  all.getEsp6500() != null && all.getEsp6500().getAlleleFrequency().compareTo(BigDecimal.valueOf(0.01)) == -1);
 
 
         deleteFiles(extension, otherExtension, logExtension, fileEntity.getFileFakeName());

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>ViewPage</title>
+</head>
+<body>
+<form class="filterGroup" method="post" action="/view/filters">
+    <input type="submit" name="formBtn" id="formBtn">
+    <div class="filters" id="filters" name="filters">
+        <select class="dbSelect" id="dbSelect" name="dbSelect">
+            <option th:each="cols : ${cols}" th:text="${cols.colsName}" th:value="${cols.colsNum}"></option>
+        </select>
+        <select calss="condition" id="condition" name="condition">
+            <option value="equal">＝</option>
+            <option value="notEqual">≠</option>
+        </select>
+        <input class="comp" name="comp" id="comp"/>
+        <button name="remove" id="remove">삭제</button>
+    </div>
+</form>
+
+<button name="addFilter" id="addFilter">추가</button>
+<br>
+<input type="checkbox" name="box" th:each="cols : ${cols}" th:text="${cols.colsName}" th:value="${cols.colsNum}"
+       checked="${cols.colsStatus}">
+
+<div th:each="filterList : ${filterList}" style="float: right">
+    <input type="hidden" name="dbSelect" value="${filterList.dbSelect}">
+    <input type="hidden" name="condition" value="${filterList.condition}">
+    <input type="hidden" name="comp " value="${filterList.comp}">
+</div>
+
+
+<!--<button name="btn" id="btn">filltering</button>-->
+<table class="board_list" border="1">
+    <thead>
+    <tr>
+        <th scope="col" th:each="cols : ${cols}" th:text="${cols.colsName}" class="columns"
+            th:class="${cols.colsNum}"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <div th:if="${#lists.size(list)} > 0 " th:each="list : ${list}">
+        <tr style="text-align: center">
+            <td rowspan="6" th:if="${list.chr} != null" th:text="${list.chr}" data-value="0" class="columns"></td>
+            <td rowspan="6" th:if="${list.start} != null" th:text="${list.start}" data-value="1" class="columns"></td>
+            <td rowspan="6" th:if="${list.end} != null" th:text="${list.end}" data-value="2" class="columns"></td>
+            <td rowspan="6" th:if="${list.ref} != null" th:text="${list.ref}" data-value="3" class="columns"></td>
+            <td rowspan="6" th:if="${list.alt} != null" th:text="${list.alt}" data-value="4" class="columns"></td>
+
+            <td rowspan="6" th:if="${list.funcRefGene} != null" th:text="${list.funcRefGene}" data-value="5"
+                class="columns"></td>
+            <td rowspan="6" th:if="${list.geneRefGene} != null" th:text="${list.geneRefGene}" data-value="6"
+                class="columns"></td>
+            <td rowspan="6" th:if="${list.geneDetail} != null" data-value="7" class="columns">
+                <div th:each="glist : ${list.geneDetailList}" th:text="${glist}"></div>
+            </td>
+            <td rowspan="6" th:if="${list.exonicRefGene} != null" th:text="${list.exonicRefGene}" data-value="8"
+                class="columns"></td>
+            <td rowspan="6" th:if="${list.changRefGene} != null" data-value="9" class="columns">
+                <div th:each="glist : ${list.changeRefGeneList}" th:text="${glist}"></div>
+            </td>
+
+            <td rowspan="6" th:if="${list.siftScore} != null" th:text="${list.siftScore}" data-value="10"
+                class="columns"></td>
+            <td rowspan="6" th:if="${list.ppScore} != null" th:text="${list.ppScore}" data-value="11"
+                class="columns"></td>
+            <td style="text-align: left" data-value="12" class="columns">CLINSIG</td>
+            <td th:if="${list.clinvarMap} != null" th:text="${list.clinvarMap.get('CLINSIG')}" data-value="12"
+                class="columns"
+                style="text-align: left"></td>
+            <td th:if="${list.clinvarMap} == null" th:text="NA" style="text-align: left" data-value="12"
+                class="columns"></td>
+
+            <td rowspan="6" th:if="${list.genome1000Alle} != -100" th:text="${list.genome1000Alle}" data-value="13"
+                class="columns"></td>
+            <td rowspan="6" th:if="${list.genome1000Alle} == -100" th:text="NA" data-value="13" class="columns"></td>
+            <td rowspan="6" th:if="${list.exacAlle} != -100" th:text="${list.exacAlle}" data-value="14"
+                class="columns"></td>
+            <td rowspan="6" th:if="${list.exacAlle} == -100" th:text="NA" data-value="14" class="columns"></td>
+            <td rowspan="6" th:if="${list.esp6500Alle} != -100" th:text="${list.esp6500Alle}" data-value="22"
+                class="columns"></td>
+            <td rowspan="6" th:if="${list.esp6500Alle} == -100" th:text="NA" data-value="22" class="columns"></td>
+        </tr>
+
+        <tr>
+            <td data-value="12" class="columns">CLNDBN</td>
+            <td th:if="${list.clinvarMap} != null" th:text="${list.clinvarMap.get('CLNDBN')}" data-value="12"
+                class="columns"></td>
+            <td th:if="${list.clinvarMap} == null" th:text="NA" style="text-align: left" data-value="12"
+                class="columns"></td>
+        </tr>
+        <tr>
+            <td data-value="12" class="columns">CLNREVSTAT</td>
+            <td th:if="${list.clinvarMap} != null" th:text="${list.clinvarMap.get('CLNREVSTAT')}" data-value="12"
+                class="columns"></td>
+            <td th:if="${list.clinvarMap} == null" th:text="NA" style="text-align: left" data-value="12"
+                class="columns"></td>
+        </tr>
+        <tr>
+            <td data-value="12" class="columns">CLNACC</td>
+            <td th:if="${list.clinvarMap} != null" th:text="${list.clinvarMap.get('CLNACC')}" data-value="12"
+                class="columns"></td>
+            <td th:if="${list.clinvarMap} == null" th:text="NA" style="text-align: left" data-value="12"
+                class="columns"></td>
+        </tr>
+        <tr>
+            <td data-value="12" class="columns">CLNDSDB</td>
+            <td th:if="${list.clinvarMap} != null" th:text="${list.clinvarMap.get('CLNDSDB')}" data-value="12"
+                class="columns"></td>
+            <td th:if="${list.clinvarMap} == null" th:text="NA" style="text-align: left" data-value="12"
+                class="columns"></td>
+        </tr>
+        <tr>
+            <td data-value="12" class="columns">CLNDSDBID</td>
+            <td th:if="${list.clinvarMap} != null" th:text="${list.clinvarMap.get('CLNDSDBID')}" data-value="12"
+                class="columns"></td>
+            <td th:if="${list.clinvarMap} == null" th:text="NA" style="text-align: left" data-value="12"
+                class="columns"></td>
+        </tr>
+    </div>
+    </tbody>
+
+</table>
+
+
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+    //체크박스 풀면 hide..
+    $("input:checkbox[name='box']").change(function () {
+        var value = $(this).val();
+        var isCheck = $(this).is(':checked');
+
+
+        $(".columns").each(function () {
+            if (!isCheck) {
+                if (value == $(this).attr("data-value")) {
+                    $(this).hide();
+                    $('.' + value).hide();
+                }
+            } else {
+                if (value == $(this).attr("data-value")) {
+                    $(this).show();
+                    $('.' + value).show();
+                }
+            }
+
+        });//end tab
+    });//end change
+
+
+    $("#dbSelect").change(function () {
+        var dbSelect = $(this).val();
+
+        $("select[name='condition'] option").remove();
+        $("<option></option>>").text("=").attr("value", "equal").appendTo("select[name='condition']");
+        $("<option></option>>").text("≠").attr("value", "notEqual").appendTo("select[name='condition']");
+
+        if (dbSelect == 13 || dbSelect == 14 || dbSelect == 22) {
+            $("<option></option>>").text("<").attr("value", "less").appendTo("select[name='condition']");
+            $("<option></option>>").text(">").attr("value", "greater").appendTo("select[name='condition']");
+            $("<option></option>>").text("≤").attr("value", "lessEqual").appendTo("select[name='condition']");
+            $("<option></option>>").text("≥").attr("value", "greaterEqual").appendTo("select[name='condition']");
+        }
+
+    });
+
+
+    $("#btn").click(function () {
+
+        var dbSelectList = new Array();
+        var conditionList = new Array();
+        var inputCompList = new Array();
+
+        $('select[name=dbSelect]').each(function () {
+            dbSelectList.push($(this).val());
+        });
+
+        $('select[name=condition]').each(function () {
+            conditionList.push($(this).val());
+        });
+
+        $('.comp').each(function () {
+            inputCompList.push($(this).val());
+        });
+
+        var filterList = new Array();
+
+        for (var i = 0; i < dbSelectList.length; i++) {
+            var temp = new Object();
+            temp.colsNum = dbSelectList[i];
+            temp.condition = conditionList[i];
+            temp.inputComp = inputCompList[i];
+
+            filterList.push(temp);
+        }
+
+        var jsonObj = JSON.stringify(filterList);
+
+        $.ajaxSetup({async: false});
+        $.post("/view/filters", {
+            filterList: jsonObj
+        });
+
+    });
+
+    $("#remove").click(function () {
+        $(this).parents("div").remove();
+    })
+
+    $("#addFilter").click(function () {
+        var filters = $("#filters").clone(true);
+        $(".filterGroup").append(filters);
+    });
+
+</script>
+</html>

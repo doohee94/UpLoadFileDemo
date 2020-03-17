@@ -17,12 +17,12 @@
     </colgroup>
     <thead>
     <tr>
-        <th scope="col">1</th>
-        <th scope="col">1</th>
-        <th scope="col">1</th>
-        <th scope="col">1</th>
-        <th scope="col">1</th>
-        <th scope="col">1</th>
+        <th scope="col" class="tab" data-value="1">1</th>
+        <th scope="col" class="tab" data-value="2">2</th>
+        <th scope="col" class="tab" data-value="2">3</th>
+        <th scope="col" class="tab" data-value="4">4</th>
+        <th scope="col" class="tab" data-value="5">5</th>
+        <th scope="col" class="tab" data-value="6">6</th>
 
 
     </tr>
@@ -31,36 +31,67 @@
     <tbody>
     <div>
         <tr style="text-align: center">
-            <td rowspan="4">type</td>
-            <td>clen</td>
-            <td>c2</td>
-            <td rowspan="4">num</td>
-            <td rowspan="4">ref</td>
-            <td rowspan="4">alt</td>
+            <td rowspan="4" class="tab" data-value="1">type</td>
+            <td class="tab" data-value="2">clen</td>
+            <td class="tab" data-value="2">c2</td>
+            <td rowspan="4" class="tab" data-value="4">num</td>
+            <td rowspan="4" class="tab" data-value="5">ref</td>
+            <td rowspan="4" class="tab" data-value="6">alt</td>
 
         </tr>
 
         <tr style="text-align: center">
-            <td>c2</td>
-            <td>내용</td>
+            <td class="tab" data-value="2">c2</td>
+            <td class="tab" data-value="2">내용</td>
         </tr>
         <tr style="text-align: center">
-            <td>c3</td>
-            <td>aa2aaa</td>
+            <td class="tab" data-value="2">c3</td>
+            <td class="tab" data-value="2">aa2aaa</td>
         </tr>
         <tr style="text-align: center">
-            <td>c4</td>
-            <td>aa2aaa</td>
+            <td class="tab" data-value="2">c4</td>
+            <td class="tab" data-value="2">aa2aaa</td>
         </tr>
 
     </div>
 
 
-
-
-
     </tbody>
+
+    <input type="checkbox" name="box" th:text="1번삭제" checked="checked" value="1">
+    <input type="checkbox" name="box" th:text="2번삭제" checked="checked"value="2">
+    <input type="checkbox" name="box" th:text="3번삭제" checked="checked"value="3">
+    <input type="checkbox" name="box" th:text="4번삭제" checked="checked"value="4">
+    <input type="checkbox" name="box" th:text="5번삭제" checked="checked"value="5">
+    <input type="checkbox" name="box" th:text="6번삭제" checked="checked"value="6">
+
+
 
 </table>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+    $("input:checkbox[name='box']").change(function () {
+        var value = $(this).val();
+        var isCheck = $(this).is(':checked');
+        $(".tab").each(function () {
+
+            if(!isCheck){
+                if(value == $(this).attr("data-value") ){
+                    $(this).hide();
+                }
+            }else{
+                if(value == $(this).attr("data-value") ){
+                    $(this).show();
+                }
+            }
+
+
+        });//end tab
+    });//end change
+    //체크박스 풀면 hide..
+
+
+</script>
 </html>
