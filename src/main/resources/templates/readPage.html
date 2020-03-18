@@ -5,9 +5,47 @@
     <title>ReadPage</title>
 </head>
 <body>
-<pre>
-    <p th:text="${fileContent}"></p>
-</pre>
+<div style="float: left">
+    <form class="filterGroup" method="post" action="/view/filters" >
+        <input type="submit" name="formBtn" id="formBtn">
+        <div class="filters" id="filters" name="filters">
+            <select class="dbSelect" id="dbSelect" name="dbSelect">
+                <option th:each="cols : ${cols}" th:text="${cols.colsName}" th:value="${cols.colsNum}"></option>
+            </select>
+            <select calss="condition" id="condition" name="condition">
+                <option value="equal">＝</option>
+                <option value="notEqual">≠</option>
+            </select>
+            <input class="comp" name="comp" id="comp"/>
+            <button type="button" name="remove" id="remove">삭제</button>
+        </div>
+    </form>
+    <button name="addFilter" id="addFilter">추가</button>
+</div>
+
+<div  style="float:left;">
+    <div>
+        <p style="color: #ff0000; float: left">■</p> <p style="float:left;">dfsaf</p>
+        <p style="color: #0000ff; float: left">■</p> <p style="float:left;">dfsaf</p>
+    </div>
+    <div >
+        <p style="color: #ff0000; float: left">■</p> <p style="float:left;">dfsaf</p>
+        <p style="color: #0000ff; float: left">■</p> <p style="float:left;">dfsaf</p>
+        <p style="color: #0000ff; float: left">■</p> <p style="float:left;">dfsaf</p>
+    </div>
+</div>
+
+
+<div style="clear: left">
+    <input type="checkbox" name="box" th:text="1번삭제" checked="checked" value="1">
+    <input type="checkbox" name="box" th:text="2번삭제" checked="checked" value="2">
+    <input type="checkbox" name="box" th:text="3번삭제" checked="checked" value="3">
+    <input type="checkbox" name="box" th:text="4번삭제" checked="checked" value="4">
+    <input type="checkbox" name="box" th:text="5번삭제" checked="checked" value="5">
+    <input type="checkbox" name="box" th:text="6번삭제" checked="checked" value="6">
+</div>
+
+
 <table class="board_list" border="1">
     <colgroup>
         <col width="15%"/>
@@ -31,58 +69,38 @@
     <tbody>
     <div>
         <tr style="text-align: center">
-            <td rowspan="4" class="tab" data-value="1">type</td>
+            <td rowspan="3" class="tab" data-value="1">type</td>
             <td class="tab" data-value="2">clen</td>
-            <td class="tab" data-value="2">c2</td>
-            <td rowspan="4" class="tab" data-value="4">num</td>
-            <td rowspan="4" class="tab" data-value="5">ref</td>
-            <td rowspan="4" class="tab" data-value="6">alt</td>
+            <td rowspan="2" class="tab" data-value="2">0.1,0.9,D</td>
+            <td rowspan="3" class="tab" data-value="4">num</td>
+            <td rowspan="3" class="tab" data-value="5">ref</td>
+            <td rowspan="3" class="tab" data-value="6">alt</td>
 
         </tr>
 
-        <tr style="text-align: center">
-            <td class="tab" data-value="2">c2</td>
-            <td class="tab" data-value="2">내용</td>
-        </tr>
-        <tr style="text-align: center">
-            <td class="tab" data-value="2">c3</td>
-            <td class="tab" data-value="2">aa2aaa</td>
-        </tr>
-        <tr style="text-align: center">
-            <td class="tab" data-value="2">c4</td>
-            <td class="tab" data-value="2">aa2aaa</td>
-        </tr>
 
     </div>
 
 
     </tbody>
 
-    <input type="checkbox" name="box" th:text="1번삭제" checked="checked" value="1">
-    <input type="checkbox" name="box" th:text="2번삭제" checked="checked"value="2">
-    <input type="checkbox" name="box" th:text="3번삭제" checked="checked"value="3">
-    <input type="checkbox" name="box" th:text="4번삭제" checked="checked"value="4">
-    <input type="checkbox" name="box" th:text="5번삭제" checked="checked"value="5">
-    <input type="checkbox" name="box" th:text="6번삭제" checked="checked"value="6">
-
-
-
 </table>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript">
+
 
     $("input:checkbox[name='box']").change(function () {
         var value = $(this).val();
         var isCheck = $(this).is(':checked');
         $(".tab").each(function () {
 
-            if(!isCheck){
-                if(value == $(this).attr("data-value") ){
+            if (!isCheck) {
+                if (value == $(this).attr("data-value")) {
                     $(this).hide();
                 }
-            }else{
-                if(value == $(this).attr("data-value") ){
+            } else {
+                if (value == $(this).attr("data-value")) {
                     $(this).show();
                 }
             }
@@ -90,7 +108,6 @@
 
         });//end tab
     });//end change
-    //체크박스 풀면 hide..
 
 
 </script>

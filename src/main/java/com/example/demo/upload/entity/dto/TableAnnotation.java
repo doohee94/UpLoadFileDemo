@@ -24,39 +24,46 @@ public class TableAnnotation {
     String changRefGene;
     List<String> changeRefGeneList;
     String siftScore;
+    List<String>siftScoreList;
     String ppScore;
-    String clinvar;
-    Map<String, String> clinvarMap;
-    double genome1000Alle;
-    double exacAlle;
-    double esp6500Alle;
+    List<String>ppScoreList;
+    String clnalleleid;
+    String clndn;
+    List<String> clndnList;
+    String clndisdb;
+    List<String> clndisdbList;
+    String clnrevstat;
+    List<String> clnrevstatList;
+    String clnsig;
+    String genome1000Alle;
+    String exacAlle;
+    String esp6500Alle;
 
-    public static class TableAnnotationBuilder{
+    public static class TableAnnotationBuilder {
 
-        public TableAnnotationBuilder geneDetailList(String geneDetail){
-            this.geneDetailList = spiltList(geneDetail,";");
+        public TableAnnotationBuilder geneDetailList(String geneDetail) {
+            this.geneDetailList = spiltList(geneDetail, ";");
             return this;
         }
 
-        public TableAnnotationBuilder changeRefGeneList(String changRefGene){
-            this.changeRefGeneList = spiltList(changRefGene,",");
+        public TableAnnotationBuilder changeRefGeneList(String changRefGene) {
+            this.changeRefGeneList = spiltList(changRefGene, ",");
+            return this;
+        }
+        public TableAnnotationBuilder clndnList(String clndn) {
+            this.clndnList = spiltList(clndn, "|");
+            return this;
+        }
+        public TableAnnotationBuilder clndisdbList(String clndisdb) {
+            this.clndisdbList = spiltList(clndisdb, "|");
+            return this;
+        }
+        public TableAnnotationBuilder clnrevstatList(String clnrevsta) {
+            this.clnrevstatList = spiltList(clnrevsta, ",");
             return this;
         }
 
-        public TableAnnotation.TableAnnotationBuilder clinvarMap(String geneNames) {
-            if(geneNames.equals(".")){
-                this.clinvarMap = null;
-                return this;
-            }
 
-            List<String> tempList = spiltList(geneNames, ";");
-            Map<String, String> map = new HashMap<>();
-            for (int j = 0; j < tempList.size(); j++) {
-                map.put(spiltList(tempList.get(j), "=").get(0), spiltList(tempList.get(j), "=").get(1));
-            }
-            this.clinvarMap = map;
-            return this;
-        }
 
         /**
          * method

@@ -1,8 +1,6 @@
 package com.example.demo.upload.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
@@ -13,7 +11,9 @@ import java.util.Optional;
 @Table(name = "files")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class FileEntity {
 
 
@@ -37,6 +37,8 @@ public class FileEntity {
 
     @Enumerated(EnumType.STRING)
     private SaveStatus saveStatus;
+
+
 }
 
 
