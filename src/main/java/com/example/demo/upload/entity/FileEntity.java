@@ -1,5 +1,8 @@
 package com.example.demo.upload.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
 
@@ -18,12 +21,12 @@ public class FileEntity {
 
 
     @Id
+    @Column(name="file_idx")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int fileIdx;
 
-    @ManyToOne(optional = false)
     @JoinColumn(name = "person_id")
-    private PersonEntity personEntity;
+    private int personId;
 
     private String fileName;
 

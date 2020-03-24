@@ -16,7 +16,7 @@ public interface FileUploadService {
     FileEntity getFile(int fileIdx) throws Exception;
     void deleteFile(int fileIdx) throws Exception;
     void changeStatus(FileEntity fileEntity) throws Exception;
-    List<FileEntity> getFileListByPersonId(int personId) throws Exception;
     List<PersonEntity> getPersonList()throws  Exception;
     FileEntity getFileByFileFakeName(String fileName)throws Exception;
+    Page<FileEntity> getFileListByPersonId(int personId, Pageable pageable) throws Exception;
 }

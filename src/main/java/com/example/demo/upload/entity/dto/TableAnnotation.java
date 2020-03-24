@@ -38,6 +38,7 @@ public class TableAnnotation {
     String genome1000Alle;
     String exacAlle;
     String esp6500Alle;
+    String snp138;
 
     public static class TableAnnotationBuilder {
 

@@ -12,4 +12,6 @@ import java.util.List;
 public interface FileUploadRepository extends JpaRepository<FileEntity, Integer> {
     Page<FileEntity> findBySaveStatus(SaveStatus saveStatus, Pageable pageable);
     FileEntity findByFileFakeName(String fileFakeName);
+    Page<FileEntity> findByPersonId(int personId,Pageable pageable);
+    FileEntity findByFileIdx(int fileIdx);
 }

@@ -7,32 +7,41 @@
 <body>
 
 <div style="float: left">
-    <form class="filterGroup" method="post" action="/view/filters">
+    <form id="filterForm" class="filterGroup" method="post" action="/view/filters">
         <input type="submit" name="formBtn" id="formBtn">
-        <div class="filters" id="filters" name="filters">
+        <div class="filters" id="filters" name="filters" th:each="filterList : ${filterList}">
             <select class="dbSelect" id="dbSelect" name="dbSelect">
-                <option th:each="cols : ${cols}" th:text="${cols.colsName}" th:value="${cols.colsNum}"></option>
+                <option th:each="cols : ${cols}" th:text="${cols.colsName}" th:value="${cols.colsNum}"
+                        th:selected="${filterList.dbSelect == cols.colsNum}"></option>
             </select>
             <select calss="condition" id="condition" name="condition">
                 <option value="equal">＝</option>
                 <option value="notEqual">≠</option>
             </select>
-            <input autocomplete="off" class="comp" name="comp" id="comp"/>
-            <input th:value=${fileIdx} type="hidden" id="fileIdx" name="fileIdx">
-            <button type="button" name="remove" id="remove">삭제</button>
+            <input autocomplete="off" class="comp" name="comp" id="comp" th:value="${filterList.comp}"/>
+            <input th:value="${fileIdx}" type="hidden" id="fileIdx" name="fileIdx">
+            <input th:value="${pageStatus}" type="hidden" id="pageStatus" name="pageStatus">
+            <input th:value="${pageSize}" type="hidden" id="pageSize" name="pageSize">
+            <button type="button" class="remove" name="remove" id="remove">삭제</button>
         </div>
     </form>
 
     <button name="addFilter" id="addFilter">추가</button>
 </div>
 
-<div  style="float:left;">
-        <p style="color: #ff0000; float: left">■</p> <p style="float:left;">SIFTscore D(score≤0.05)</p>
-        <p style="color: #0000ff; float: left">■</p> <p style="float:left;">SIFTscore P(score>0.05)</p>
-        <p style="float: left">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
-        <p style="color: #ff0000; float: left">■</p> <p style="float:left;">PPscore D(0.957≤score≤1)</p>
-        <p style="color: #ffb819; float: left">■</p> <p style="float:left;">PPscore D(0.453≤score≤0.956)</p>
-        <p style="color: #0000ff; float: left">■</p> <p style="float:left;">PPscore D(0≤score≤0.452)</p>
+<div style="float:left;">
+    <p style="color: #ff0000; float: left">■</p>
+    <p style="float:left;">SIFTscore D(score≤0.05)</p>
+    <p style="color: #0000ff; float: left">■</p>
+    <p style="float:left;">SIFTscore P(score>0.05)</p>
+    <p style="float: left">
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+    <p style="color: #ff0000; float: left">■</p>
+    <p style="float:left;">PPscore D(0.957≤score≤1)</p>
+    <p style="color: #ffb819; float: left">■</p>
+    <p style="float:left;">PPscore D(0.453≤score≤0.956)</p>
+    <p style="color: #0000ff; float: left">■</p>
+    <p style="float:left;">PPscore D(0≤score≤0.452)</p>
 </div>
 
 <div style="clear: left">
@@ -42,11 +51,14 @@
 
 
 <!--<button name="btn" id="btn">filltering</button>-->
-<table class="board_list" border="1" >
+<table class="board_list" border="1">
     <thead>
     <tr>
-        <th scope="col" th:each="cols : ${cols}" th:text="${cols.colsName}" class="columns"
-            th:class="${cols.colsNum}"></th>
+        <th scope="col" th:each="cols : ${cols}" th:text="${cols.colsName}" class="columns ths"
+            th:class="${cols.colsNum}">
+            <a th:text="${cols.colsName}" th:value="${cols.sortingStatus}" th:class="${cols.colsNum}"
+               style="text-decoration: none"></a>
+        </th>
     </tr>
     </thead>
 
@@ -98,12 +110,12 @@
             <td th:if="${list.esp6500Alle} != '-100'" th:text="${list.esp6500Alle}" data-value="26"
                 class="columns"></td>
             <td th:if="${list.esp6500Alle} == '-100'" th:text="." data-value="26" class="columns"></td>
+            <!--            <td th:if="${list.snp138} != null" th:text="${list.snp138}" data-value="27" class="columns"></td>-->
         </tr>
 
 
     </div>
     </tbody>
-
 </table>
 
 
@@ -112,6 +124,13 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript">
 
+
+    $("#pageSizeSelect").change(function () {
+        var pageSize = $(this).val();
+        $('#pageSize').val(pageSize);
+        $("#pageStatus").val(1);
+        filterForm.submit();
+    });
 
     $(".siftScore").each(function () {
         var status = $(this).text();
@@ -178,7 +197,7 @@
         $(".dbSelect").each(function () {
             var value = $(this).val();
 
-            if (value==10 || value==11 ||value == 17 || value == 18 || value == 26) {
+            if (value == 10 || value == 11 || value == 17 || value == 18 || value == 26) {
                 $("<option></option>>").text("<").attr("value", "less").appendTo($(this).next());
                 $("<option></option>>").text(">").attr("value", "greater").appendTo($(this).next());
                 $("<option></option>>").text("≤").attr("value", "lessEqual").appendTo($(this).next());
@@ -188,7 +207,7 @@
     });
 
 
-    $("#remove").click(function () {
+    $(".remove").click(function () {
 
         if ($(".filters").length == 1) {
             return;
@@ -199,8 +218,8 @@
 
     $("#addFilter").click(function () {
 
-        if ($(".filters").length > 4) {
-            alert("5개까지 가능");
+        if ($(".filters").length > 9) {
+            alert("10개까지 가능");
             return;
         }
 
