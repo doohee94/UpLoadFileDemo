@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -19,8 +18,6 @@ public class QPersonEntity extends EntityPathBase<PersonEntity> {
     private static final long serialVersionUID = 1611328368L;
 
     public static final QPersonEntity personEntity = new QPersonEntity("personEntity");
-
-    public final ListPath<FileEntity, QFileEntity> fileEntity = this.<FileEntity, QFileEntity>createList("fileEntity", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
 
     public final NumberPath<Integer> personId = createNumber("personId", Integer.class);
 

@@ -22,11 +22,6 @@
 </form>
 <br>
 
-<form id='viewAnnovar' action="/view/AllView" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-    <p>Table_Annovar</p>
-    <input type="file" id="viewAnnovarInput" name="file">
-    <input type="submit">
-</form>
 
 
 <br>
@@ -69,8 +64,9 @@
 <a href="/tolist">DB에 저장되어있는 목록</a>
 <br>
 <a href="/personFileList" th:attrappend="href=0">한사람당 가지고있는 파일 목록..</a>
+<a href="/restTest?str=165">TEST</a>
 <br>
-<a href="/view/AllView"> table_annovar 파싱 이동</a>
+
 <pre>
     <p th:text="${fileContent}"></p>
 </pre>

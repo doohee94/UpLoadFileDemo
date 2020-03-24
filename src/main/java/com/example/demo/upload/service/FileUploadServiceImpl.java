@@ -65,13 +65,7 @@ public class FileUploadServiceImpl implements FileUploadService{
         fileUploadRepository.save(fileEntity);
     }
 
-    @Override
-    public List<FileEntity> getFileListByPersonId(int personId) throws Exception {
-        Optional<PersonEntity> optional = personRepository.findById(personId);
-        PersonEntity personEntity =optional.get();
-        List<FileEntity> list = personEntity.getFileEntity();
-        return list;
-    }
+
 
     @Override
     public List<PersonEntity> getPersonList() throws Exception {
@@ -81,6 +75,11 @@ public class FileUploadServiceImpl implements FileUploadService{
     @Override
     public FileEntity getFileByFileFakeName(String fileFakeName) throws Exception {
         return fileUploadRepository.findByFileFakeName(fileFakeName);
+    }
+
+    @Override
+    public Page<FileEntity> getFileListByPersonId(int personId, Pageable pageable) throws Exception {
+        return fileUploadRepository.findByPersonId(personId, pageable);
     }
 
 

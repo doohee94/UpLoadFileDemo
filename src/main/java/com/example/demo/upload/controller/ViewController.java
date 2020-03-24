@@ -1,40 +1,44 @@
 package com.example.demo.upload.controller;
 
+import com.example.demo.upload.common.PaginationUtil;
 import com.example.demo.upload.entity.FileEntity;
 import com.example.demo.upload.entity.PersonEntity;
 import com.example.demo.upload.entity.SaveStatus;
 import com.example.demo.upload.entity.dto.*;
 import com.example.demo.upload.service.FileUploadService;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import htsjdk.tribble.annotation.Strand;
+import javafx.collections.transformation.FilteredList;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.xml.ws.Response;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Controller
+@RestController
 @RequestMapping("/view")
 public class ViewController {
 
@@ -42,7 +46,7 @@ public class ViewController {
     FileUploadService fileUploadService;
 
     @RequestMapping(value = "/AllView", method = RequestMethod.POST)
-    public ModelAndView AllView(@RequestPart(required = false) MultipartFile file) throws Exception {
+    public ModelAndView AllView(@RequestPart(required = false) MultipartFile file,Pageable pageable) throws Exception {
 
         //1. 업로드된 VCF파일 저장
         String sourceFileName = file.getOriginalFilename(); //파일 이름
@@ -60,14 +64,13 @@ public class ViewController {
                 .fileFakeName(destinationFileName)
                 .attachmentUrl("C:/uploadedFile/" + destinationFileName)
                 .saveStatus(SaveStatus.UPLOADED)
-                .personEntity(new PersonEntity((int) (Math.random() * 10) + 1));
+                .personId(((int) (Math.random() * 10) + 1));
         FileEntity fileEntity = builder.build();
 
         fileUploadService.saveFile(fileEntity);
         int fileIdx = fileUploadService.getFileByFileFakeName(fileEntity.getFileFakeName()).getFileIdx();
 
         //2. 저장된 VCF파일의 경로와 파일 이름을 보내서 avinput 파일 생성
-        convert2annovar(fileEntity.getAttachmentUrl(), fileEntity.getFileFakeName());
         tableAnnovar(fileEntity.getFileFakeName());
 
         Path path = Paths.get("C:/convertFile/" + fileEntity.getFileFakeName() + ".hg19_multianno.txt");
@@ -76,16 +79,26 @@ public class ViewController {
         List<TableAnnotation> list = getFileList(fileContentList);
         List<Cols> cols = getCols(fileContentList.get(0).split("\t"));
 
+
+        deleteFiles(fileEntity.getFileFakeName());
+
+        List<Filter> filterList = new ArrayList<>();
+        Filter filter = new Filter("1", "equal", "");
+        filterList.add(filter);
+        Page<?> pageList = PaginationUtil.convertListToPage(list, pageable);
+
         ModelAndView mv = new ModelAndView();
         mv.setViewName("ViewPage");
-        mv.addObject("list", list);
+        mv.addObject("list", pageList);
         mv.addObject("cols", cols);
         mv.addObject("fileIdx", fileIdx);
+        mv.addObject("filterList", filterList);
+        mv.addObject("pageStatus", 1);
         return mv;
     }//end AllView
 
     @RequestMapping(value = "/filters", method = RequestMethod.POST)
-    public ModelAndView filters(String dbSelect, String condition, String comp, int fileIdx) throws Exception {
+    public ModelAndView filters(String dbSelect, String condition, String comp, int fileIdx, Pageable pageable) throws Exception {
 
         FileEntity fileEntity = fileUploadService.getFile(fileIdx);
 
@@ -104,15 +117,40 @@ public class ViewController {
         }
 
         List<TableAnnotation> list = getFilterFileListByList(fileContentList, filterList);
-
         List<Cols> cols = getCols(fileContentList.get(0).split("\t"));
+
+
+        Page<?> pageList = PaginationUtil.convertListToPage(list, pageable);
+
 
         ModelAndView mv = new ModelAndView();
         mv.setViewName("ViewPage");
-        mv.addObject("list", list);
+//        mv.addObject("list", list.subList(subListStart, subListEnd));
+        mv.addObject("list", pageList);
         mv.addObject("cols", cols);
         mv.addObject("fileIdx", fileIdx);
+        mv.addObject("filterList", filterList);
         return mv;
+    }
+
+    @RequestMapping(value = "/read{fileIdx}")
+    public ResponseEntity getFileByPersonId(@PathVariable("fileIdx") int fileIdx, Pageable pageable) throws Exception {
+
+        FileEntity fileEntity = fileUploadService.getFile(fileIdx);
+
+        Path path = Paths.get("C:/convertFile/" + fileEntity.getFileFakeName() + ".hg19_multianno.txt");
+        List<String> fileContentList = Files.readAllLines(path);
+
+        List<TableAnnotation> list = getFileList(fileContentList);
+        List<Cols> cols = getCols(fileContentList.get(0).split("\t"));
+
+        List<Filter> filterList = new ArrayList<>();
+        Filter filter = new Filter("1", "equal", "");
+        filterList.add(filter);
+
+        Page<?> pageList = PaginationUtil.convertListToPage(list, pageable);
+
+        return new ResponseEntity(pageList, HttpStatus.OK);
     }
 
 
@@ -123,7 +161,7 @@ public class ViewController {
 
         List<TableAnnotation> list = new ArrayList<>();
 
-        for (int i = 1; i < 10; i++) {
+        for (int i = 1; i < fileContentList.size(); i++) {
 
             TableAnnotation.TableAnnotationBuilder builder = TableAnnotation.builder();
 
@@ -158,6 +196,7 @@ public class ViewController {
                     .genome1000Alle(temp[17].equals(".") ? "-100" : format.format(Double.parseDouble(temp[17])))
                     .exacAlle(temp[18].equals(".") ? "-100" : format.format(Double.parseDouble(temp[18])))
                     .esp6500Alle(temp[26].equals(".") ? "-100" : format.format(Double.parseDouble(temp[26])));
+            //.snp138(temp[27]);
 
             list.add(builder.build());
         }//end for
@@ -176,6 +215,7 @@ public class ViewController {
         return list;
     }
 
+
     private List<TableAnnotation> getFilterFileListByList(List<String> fileContentList, List<Filter> filterList) throws Exception {
         List<TableAnnotation> list = new ArrayList<>();
 
@@ -191,8 +231,12 @@ public class ViewController {
                 String inputComp = filterList.get(j).getComp().trim();
                 String colsNum = filterList.get(j).getDbSelect().trim();
 
+                if (inputComp.equals("")) {
+                    continue;
+                }
+
                 // '.' 으로 되어있는 애들 제거 // 필터 아무것도 입력 안된거 제거
-                if (temp[Integer.parseInt(colsNum)].equals(".") || condition.equals("") || inputComp.equals("") || colsNum.equals("")) {
+                if (temp[Integer.parseInt(colsNum)].equals(".")) {
                     continue iForOUT;
                 }
 
@@ -208,7 +252,7 @@ public class ViewController {
                                 status++;
                             }
                         } else {
-                            if (colsNum.equals("8") || colsNum.equals("10") || colsNum.equals("13") || colsNum.equals("14") || colsNum.equals("15")) {
+                            if (colsNum.equals("9") || colsNum.equals("10") || colsNum.equals("13") || colsNum.equals("14") || colsNum.equals("15")) {
                                 if (!tempStr.contains(inputComp)) {
                                     status++;
                                 }
@@ -226,7 +270,7 @@ public class ViewController {
                                 status++;
                             }
                         } else {
-                            if (colsNum.equals("8") || colsNum.equals("10") || colsNum.equals("13") || colsNum.equals("14") || colsNum.equals("15")) {
+                            if (colsNum.equals("9") || colsNum.equals("10") || colsNum.equals("13") || colsNum.equals("14") || colsNum.equals("15")) {
                                 if (tempStr.contains(inputComp)) {
                                     status++;
                                 }
@@ -295,40 +339,12 @@ public class ViewController {
                     .genome1000Alle(temp[17].equals(".") ? "-100" : format.format(Double.parseDouble(temp[17])))
                     .exacAlle(temp[18].equals(".") ? "-100" : format.format(Double.parseDouble(temp[18])))
                     .esp6500Alle(temp[26].equals(".") ? "-100" : format.format(Double.parseDouble(temp[26])));
+            //.snp138(temp[27]);
             list.add(builder.build());
         }//end for
 
 
         return list;
-    }
-
-    //VCF 파일을 avinput 파일로 변환
-    private void convert2annovar(String vcfPath, String vcfName) {
-
-        List<String> list = new ArrayList<>();
-        list.add("perl");
-        list.add("C:/annovar/convert2annovar.pl");
-        list.add("-format");
-        list.add("vcf4");
-        list.add(vcfPath);
-        list.add("-outfile");
-        list.add("C:/convertFile/" + vcfName + ".avinput");
-
-        String line = "";
-
-        for (int i = 0; i < list.size(); i++) {
-            line += list.get(i) + " ";
-        }
-
-        CommandLine commandLine = CommandLine.parse(line);
-        Executor executor = new DefaultExecutor();
-        try {
-            executor.execute(commandLine);
-
-        } catch (Exception e) {
-            System.out.println("Exception : " + e.getMessage());
-        }
-
     }
 
     //table_annvar실행
@@ -337,7 +353,7 @@ public class ViewController {
         List<String> list = new ArrayList<>();
         list.add("perl ");
         list.add("C:/annovar/table_annovar.pl ");
-        list.add("C:/convertFile/" + vcfName + ".avinput ");
+        list.add("C:/uploadedFile/" + vcfName + " ");
         list.add("C:/annovar/humandb/ ");
         list.add("-buildver ");
         list.add("hg19 ");
@@ -356,6 +372,7 @@ public class ViewController {
         list.add("g,f,f,f,f,f,f ");
         list.add("-nastring ");
         list.add(". ");
+        list.add("-vcfinput ");
         list.add("-polish ");
         list.add("-xref ");
         list.add("C:/annovar/example/gene_xref.txt");
@@ -372,6 +389,27 @@ public class ViewController {
             executor.execute(commandLine);
         } catch (Exception e) {
             System.out.println("Exception : " + e.getMessage());
+        }
+
+    }
+
+    //생성된 파일 삭제
+    private void deleteFiles(String fakeName) throws Exception {
+
+        File deleteVcf = new File("C:/convertFile/" + fakeName + ".hg19_multianno.vcf");
+        File deleteAvinput = new File("C:/convertFile/" + fakeName + ".avinput");
+
+        if (deleteVcf.exists() && deleteAvinput.exists()) {
+
+            if (deleteVcf.delete()) System.out.println("VCF파일삭제 성공");
+            else throw new Exception("VCF파일 삭제 실패");
+
+            if (deleteAvinput.delete()) System.out.println("avinput파일삭제 성공");
+            else throw new Exception("avinput파일 삭제 실패");
+
+
+        } else {
+            throw new Exception("저장된 파일 없음");
         }
 
     }

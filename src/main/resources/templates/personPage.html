@@ -32,7 +32,7 @@
     <tr th:if="${#lists.size(list)} > 0" th:each="list : ${fileList}">
         <td th:text="${list.fileIdx}" id="fileIdx" th:value="${list.fileIdx}" style="text-align: center"></td>
         <td th:text="${list.personEntity.personId}" id="personId"  th:value="${list.personEntity.personId}" style="text-align: center"></td>
-        <td class="title" ><a href="/read" th:attrappend="href=${list.fileIdx}" th:text="${list.fileName}" ></a></td>
+        <td class="title" ><a href="/view/read" th:attrappend="href=${list.fileIdx}" th:text="${list.fileName}" ></a></td>
         <td class="title" style="text-align: center" th:text="${list.saveStatus}"></td>
     </tr>
     </tbody>

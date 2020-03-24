@@ -58,7 +58,7 @@ public class AnnovarController {
         fileEntity.setFileFakeName(destinationFileName);
         fileEntity.setAttachmentUrl("C:/uploadedFile/" + destinationFileName);
         fileEntity.setSaveStatus(SaveStatus.UPLOADED);
-        fileEntity.setPersonEntity(new PersonEntity((int) (Math.random() * 10) + 1));
+        fileEntity.setPersonId((int) (Math.random() * 10) + 1);
 
         fileUploadService.saveFile(fileEntity);
         int fileIdx = fileUploadService.getFileByFileFakeName(fileEntity.getFileFakeName()).getFileIdx();
