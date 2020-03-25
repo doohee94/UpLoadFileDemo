@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.validator.constraints.UniqueElements;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.Optional;
@@ -14,14 +17,11 @@ import java.util.Optional;
 @Table(name = "files")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileEntity {
-
-
     @Id
-    @Column(name="file_idx")
+    @Column(name = "file_idx")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int fileIdx;
 
@@ -42,6 +42,22 @@ public class FileEntity {
     private SaveStatus saveStatus;
 
 
+    @Builder
+    public FileEntity(MultipartFile file) {
+        this.personId = ((int) (Math.random() * 10) + 1);
+        this.fileName = file.getOriginalFilename();
+        this.fileFakeName = RandomStringUtils.randomAlphanumeric(32) + ".vcf";
+        this.fileSize = file.getSize();
+        this.fileContentType = file.getContentType();
+        this.attachmentUrl = "C:/uploadedFile/" + this.fileFakeName;
+        this.saveStatus = SaveStatus.UPLOADED;
+    }
+
+    public void isValdateExtension() {
+        if (!FilenameUtils.getExtension(fileName).toLowerCase().equals("vcf")) {
+            throw new RuntimeException("vcf파일 아님");
+        }
+    }
 }
 
 

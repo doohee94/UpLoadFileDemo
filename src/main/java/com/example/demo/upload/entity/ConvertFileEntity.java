@@ -7,7 +7,6 @@ import javax.persistence.*;
 @Table(name = "convertFiles")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConvertFileEntity {
@@ -22,10 +21,14 @@ public class ConvertFileEntity {
 
     private String fileFakeName;
 
-    private long fileSize;
-
-    private String fileContentType;
-
     private String attachmentUrl;
 
+    @Builder
+    public ConvertFileEntity(FileEntity fileEntity, String inputFileName, Long countConvertFile) {
+
+        this.originFileidx = fileEntity.getFileIdx();
+        this.fileName = inputFileName;
+        this.fileFakeName = fileEntity.getFileFakeName()+"("+(countConvertFile+1)+")"+".hg19_multianno.txt";
+        this.attachmentUrl = "C:/convertFile/" + fileEntity.getFileFakeName() +"("+(countConvertFile+1)+")"+ ".hg19_multianno.txt";
+    }
 }

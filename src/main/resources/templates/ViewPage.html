@@ -20,8 +20,6 @@
             </select>
             <input autocomplete="off" class="comp" name="comp" id="comp" th:value="${filterList.comp}"/>
             <input th:value="${fileIdx}" type="hidden" id="fileIdx" name="fileIdx">
-            <input th:value="${pageStatus}" type="hidden" id="pageStatus" name="pageStatus">
-            <input th:value="${pageSize}" type="hidden" id="pageSize" name="pageSize">
             <button type="button" class="remove" name="remove" id="remove">삭제</button>
         </div>
     </form>
@@ -29,20 +27,6 @@
     <button name="addFilter" id="addFilter">추가</button>
 </div>
 
-<div style="float:left;">
-    <p style="color: #ff0000; float: left">■</p>
-    <p style="float:left;">SIFTscore D(score≤0.05)</p>
-    <p style="color: #0000ff; float: left">■</p>
-    <p style="float:left;">SIFTscore P(score>0.05)</p>
-    <p style="float: left">
-        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
-    <p style="color: #ff0000; float: left">■</p>
-    <p style="float:left;">PPscore D(0.957≤score≤1)</p>
-    <p style="color: #ffb819; float: left">■</p>
-    <p style="float:left;">PPscore D(0.453≤score≤0.956)</p>
-    <p style="color: #0000ff; float: left">■</p>
-    <p style="float:left;">PPscore D(0≤score≤0.452)</p>
-</div>
 
 <div style="clear: left">
     <input type="checkbox" name="box" th:each="cols : ${cols}" th:text="${cols.colsName}" th:value="${cols.colsNum}"
@@ -53,71 +37,24 @@
 <!--<button name="btn" id="btn">filltering</button>-->
 <table class="board_list" border="1">
     <thead>
-    <tr>
-        <th scope="col" th:each="cols : ${cols}" th:text="${cols.colsName}" class="columns ths"
-            th:class="${cols.colsNum}">
-            <a th:text="${cols.colsName}" th:value="${cols.sortingStatus}" th:class="${cols.colsNum}"
-               style="text-decoration: none"></a>
+    <tr th:if="${index.index == 1}" th:each="list,index: ${list}">
+        <th scope="col" th:each="cols: ${list.vcfValues}" th:text="${cols.header}" class="columns ths">
         </th>
     </tr>
     </thead>
 
     <tbody>
 
-    <div th:if="${#lists.size(list)} > 0 " th:each="list : ${list}">
-        <tr style="text-align: center">
-            <td th:if="${list.chr} != null" th:text="${list.chr}" data-value="0" class="columns"></td>
-            <td th:if="${list.start} != null" th:text="${list.start}" data-value="1" class="columns"></td>
-            <td th:if="${list.end} != null" th:text="${list.end}" data-value="2" class="columns"></td>
-            <td th:if="${list.ref} != null" th:text="${list.ref}" data-value="3" class="columns"></td>
-            <td th:if="${list.alt} != null" th:text="${list.alt}" data-value="4" class="columns"></td>
-
-            <td th:if="${list.funcRefGene} != null" th:text="${list.funcRefGene}" data-value="5"
+    <div>
+        <tr style="text-align: center" th:if="${#lists.size(list)} > 0 " th:each="list : ${list}">
+            <td th:if="${#lists.size(list2)} > 0" th:each="list2 : ${list.vcfValues}" th:text="${list2.value}"
                 class="columns"></td>
-            <td th:if="${list.geneRefGene} != null" th:text="${list.geneRefGene}" data-value="6"
-                class="columns"></td>
-            <td th:if="${list.geneDetail} != null" data-value="7" class="columns">
-                <div th:each="glist : ${list.geneDetailList}" th:text="${glist}"></div>
-            </td>
-            <td th:if="${list.exonicRefGene} != null" th:text="${list.exonicRefGene}" data-value="8"
-                class="columns"></td>
-            <td th:if="${list.changRefGene} != null" data-value="9" class="columns">
-                <div th:each="glist : ${list.changeRefGeneList}" th:text="${glist}"></div>
-            </td>
-
-            <td th:if="${list.siftScore} != null" th:text="${list.siftScore}" data-value="10"
-                class="columns siftScore"></td>
-            <td th:if="${list.ppScore} != null" th:text="${list.ppScore}" data-value="11" class="columns ppScore"></td>
-
-            <td th:if="${list.clnalleleid} != null" th:text="${list.clnalleleid}" data-value="12" class="columns"></td>
-            <td th:if="${list.clndn} != null" data-value="13" class="columns">
-                <div th:each="glist : ${list.clndnList}" th:text="${glist}"></div>
-            </td>
-            <td th:if="${list.clndisdb} != null" data-value="14" class="columns">
-                <div th:each="glist : ${list.clndisdbList}" th:text="${glist}"></div>
-            </td>
-            <td th:if="${list.clnrevstat} != null" data-value="15" class="columns">
-                <div th:each="glist : ${list.clnrevstatList}" th:text="${glist}"></div>
-            </td>
-            <td th:if="${list.clnsig} != null" th:text="${list.clnsig}" data-value="16" class="columns"></td>
-
-            <td th:if="${list.genome1000Alle} != '-100'" th:text="${list.genome1000Alle}" data-value="17"
-                class="columns"></td>
-            <td th:if="${list.genome1000Alle} == '-100'" th:text="." data-value="17" class="columns"></td>
-            <td th:if="${list.exacAlle} != '-100'" th:text="${list.exacAlle}" data-value="18"
-                class="columns"></td>
-            <td th:if="${list.exacAlle} == '-100'" th:text="." data-value="18" class="columns"></td>
-            <td th:if="${list.esp6500Alle} != '-100'" th:text="${list.esp6500Alle}" data-value="26"
-                class="columns"></td>
-            <td th:if="${list.esp6500Alle} == '-100'" th:text="." data-value="26" class="columns"></td>
-            <!--            <td th:if="${list.snp138} != null" th:text="${list.snp138}" data-value="27" class="columns"></td>-->
         </tr>
 
 
     </div>
     </tbody>
 </table>
-
 
 
 </body>
