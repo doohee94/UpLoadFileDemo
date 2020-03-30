@@ -22,10 +22,6 @@ public class VcfLines {
 
     public VcfLines(){}
 
-    public VcfLines(List<VcfLine> vcfLines){
-        this.vcfLines = vcfLines;
-    }
-
     public Page<?> convertPagination(Pageable pageable) {
 
         return PaginationUtil.convertListToPage(vcfLines, pageable);
@@ -33,15 +29,13 @@ public class VcfLines {
 
     public List<VcfLine> filter(List<Filter> filterList) {
 
-        List<VcfLine> filteredList = null;
+        if(filterList.size() == 0) return vcfLines;
 
         for (Filter filter : filterList) {
-            filteredList = vcfLines.stream().filter(vcfLine -> vcfLine.isFiltered(filter)).collect(Collectors.toList());
-            List<VcfLine> temp = new ArrayList<>(filteredList);
-            vcfLines = temp;
+            vcfLines =  vcfLines.stream().filter(vcfLine -> vcfLine.isFiltered(filter)).collect(Collectors.toList());
         }
 
-        return filteredList;
+        return vcfLines;
     }
 
 }

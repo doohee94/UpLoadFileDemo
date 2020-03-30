@@ -90,9 +90,10 @@ public class VCFFileUploadController {
         int convertFileIdx = 3;
         //사용자가 선택한 필터
         List<Filter> filters = new ArrayList<>();
-        filters.add( new Filter("ljb23_sift","<","0.05"));
-        filters.add( new Filter("Ref","=","G"));
-        filters.add( new Filter("Chr","=","1"));
+//        filters.add( new Filter("ljb23_sift","<","0.05"));
+//        filters.add( new Filter("Ref","=","G"));
+//        filters.add( new Filter("Chr","=","1"));
+        filters.add( new Filter("Start","=","977390"));
 
         Page vcfLines = vcfFileUploadService.getFilteredList(filters,convertFileIdx,pageable);
         return new ResponseEntity(vcfLines,HttpStatus.OK);

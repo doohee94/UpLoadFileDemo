@@ -51,8 +51,7 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
     @Override
     public Page<FileEntity> VCFfileList(int personId, Pageable pageable) throws Exception {
-        Page<FileEntity> fileList = fileUploadRepository.findByPersonId(personId, pageable);
-        return fileList;
+        return fileUploadRepository.findByPersonId(personId, pageable);
     }
 
     @Override
@@ -86,8 +85,7 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
     @Override
     public Page<ConvertFileEntity> convertFileList(int VCFFileIdx, Pageable pageable) throws Exception {
-        Page<ConvertFileEntity> list = convertFileRepository.findAllByOriginFileidx(VCFFileIdx, pageable);
-        return list;
+        return convertFileRepository.findAllByOriginFileidx(VCFFileIdx, pageable);
     }
 
     @Override
@@ -100,13 +98,11 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
         VcfLines list = getContent(fileContentList);
 
-        Page<?> pageList = list.convertPagination(pageable);
-
-        return pageList;
+        return list.convertPagination(pageable);
     }
 
     @Override
-    public Page<?> getFilteredList(List<Filter> filters, int fileIdx, Pageable pageable) throws Exception {
+    public Page<?> getFilteredList(List<Filter> filterList, int fileIdx, Pageable pageable) throws Exception {
 
         ConvertFileEntity convertFileEntity = convertFileRepository.findByFileIdx(fileIdx);
 
@@ -115,9 +111,8 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
         VcfLines list = getContent(fileContentList);
 
-        return PaginationUtil.convertListToPage(list.filter(filters), pageable);
+        return PaginationUtil.convertListToPage(list.filter(filterList), pageable);
     }
-
 
     /**
      * methods
