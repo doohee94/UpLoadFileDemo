@@ -115,16 +115,7 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
         VcfLines list = getContent(fileContentList);
 
-        List<VcfLine> filteredList = null;
-
-        for (Filter filter : filters) {
-            filteredList = list.filter(filter);
-            VcfLines temp = new VcfLines(filteredList);
-            list = temp;
-        }
-
-        Page<?> pageList = PaginationUtil.convertListToPage(filteredList, pageable);
-        return pageList;
+        return PaginationUtil.convertListToPage(list.filter(filters), pageable);
     }
 
 

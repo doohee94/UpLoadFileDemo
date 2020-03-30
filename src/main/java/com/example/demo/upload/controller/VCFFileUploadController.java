@@ -92,7 +92,7 @@ public class VCFFileUploadController {
         List<Filter> filters = new ArrayList<>();
         filters.add( new Filter("ljb23_sift","<","0.05"));
         filters.add( new Filter("Ref","=","G"));
-        filters.add( new Filter("Chr","!=","1"));
+        filters.add( new Filter("Chr","=","1"));
 
         Page vcfLines = vcfFileUploadService.getFilteredList(filters,convertFileIdx,pageable);
         return new ResponseEntity(vcfLines,HttpStatus.OK);
