@@ -1,5 +1,6 @@
 package com.example.demo.upload.service;
 
+
 import com.example.demo.upload.PerlConfiguration;
 import com.example.demo.upload.common.PaginationUtil;
 import com.example.demo.upload.entity.ConvertFileEntity;
@@ -130,7 +131,9 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
     /**
      * methods
      */
+
     private void tableAnnovarDBSelect(List<String> dbList, String vcfName, Long countConvertFile) {
+
         String saveName = "";
         if (countConvertFile > 0) {
             saveName = vcfName + "(" + (countConvertFile + 1) + ")";
@@ -166,6 +169,7 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
         System.out.println(">>" + line.toString());
         CommandLine commandLine = CommandLine.parse(line.toString());
+
         Executor executor = new DefaultExecutor();
         try {
             executor.execute(commandLine);
@@ -176,12 +180,13 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
     }
 
 
-    //table_annvar실행
     private void tableAnnovar(String vcfName, Long countConvertFile) {
+
         String saveName = "";
         if (countConvertFile > 0) {
             saveName = vcfName + "(" + (countConvertFile + 1) + ")";
         }
+
 
         StringBuilder protocols = new StringBuilder();
         protocols.append("refGene,").
@@ -210,6 +215,7 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
         System.out.println(">>" + line);
         CommandLine commandLine = CommandLine.parse(line.toString());
+
         Executor executor = new DefaultExecutor();
         try {
             executor.execute(commandLine);
@@ -260,4 +266,5 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
             throw new Exception("저장된 파일 없음");
         }
     }
+
 }
