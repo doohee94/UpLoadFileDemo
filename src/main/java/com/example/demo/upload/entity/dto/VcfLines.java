@@ -35,8 +35,4 @@ public class VcfLines {
         return vcfLines.stream().filter(vcfLine -> vcfLine.isFiltered(filter)).collect(Collectors.toList());
     }
 
-    public List<VcfLine> convertVcfLinesToList() {
-        return vcfLines.stream().collect(Collectors.toList());
-    }
-
 }

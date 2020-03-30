@@ -26,3 +26,10 @@ spring:
         location: C:/Temp
         max-file-size: 1MB #최대사이즈
         max-request-size: 1MB #요청의 최대 사이즈
+
+
+perl:
+  command: perl C:/annovar/table_annovar.pl -remove  -nastring . -vcfinput -polish -xref C:/annovar/example/gene_xref.txt
+  annovarDB: C:/annovar/humandb/ -buildver hg19
+  uploadedPath: C:/uploadedFile/
+  convertPath: C:/convertFile/

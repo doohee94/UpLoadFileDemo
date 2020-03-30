@@ -1,5 +1,6 @@
 package com.example.demo.upload.service;
 
+import com.example.demo.upload.PerlConfiguration;
 import com.example.demo.upload.common.PaginationUtil;
 import com.example.demo.upload.entity.ConvertFileEntity;
 import com.example.demo.upload.entity.FileEntity;
@@ -36,6 +37,7 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
     private final FileUploadRepository fileUploadRepository;
     private final ConvertFileRepository convertFileRepository;
+    private final PerlConfiguration perlConfiguration;
 
     @Override
     public void fileUpload(MultipartFile file) throws Exception {
@@ -128,6 +130,52 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
     /**
      * methods
      */
+    private void tableAnnovarDBSelect(List<String> dbList, String vcfName, Long countConvertFile) {
+        String saveName = "";
+        if (countConvertFile > 0) {
+            saveName = vcfName + "(" + (countConvertFile + 1) + ")";
+        }
+
+        StringBuilder protocols = new StringBuilder();
+        StringBuilder operations = new StringBuilder();
+
+        for (int i = 0; i < dbList.size(); i++) {
+            protocols.append(dbList.get(i));
+            operations.append(dbList.get(i).equals("refGene") ? "g" : "f");
+            if (i != dbList.size() - 1) {
+                protocols.append(",");
+                operations.append(",");
+            }
+        }
+
+        StringBuilder line = new StringBuilder();
+        line.append(perlConfiguration.getCommand())
+                .append(" -protocol ")
+                .append(protocols)
+                .append(" -operation ")
+                .append(operations)
+                .append(" ")
+                .append(perlConfiguration.getUploadedPath())
+                .append(vcfName)
+                .append(" ")
+                .append(perlConfiguration.getAnnovarDB())
+                .append(" -outfile ")
+                .append(perlConfiguration.getConvertPath())
+                .append(saveName);
+
+
+        System.out.println(">>" + line.toString());
+        CommandLine commandLine = CommandLine.parse(line.toString());
+        Executor executor = new DefaultExecutor();
+        try {
+            executor.execute(commandLine);
+        } catch (Exception e) {
+            System.out.println("Exception : " + e.getMessage());
+        }
+
+    }
+
+
     //table_annvar실행
     private void tableAnnovar(String vcfName, Long countConvertFile) {
         String saveName = "";
@@ -135,40 +183,33 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
             saveName = vcfName + "(" + (countConvertFile + 1) + ")";
         }
 
-        List<String> list = new ArrayList<>();
-        list.add("perl ");
-        list.add("C:/annovar/table_annovar.pl ");
-        list.add("C:/uploadedFile/" + vcfName + " ");
-        list.add("C:/annovar/humandb/ ");
-        list.add("-buildver ");
-        list.add("hg19 ");
-        list.add("-outfile ");
-        list.add("C:/convertFile/" + saveName + " ");
-        list.add("-remove ");
-        list.add("-protocol ");
-        list.add("refGene,");
-        list.add("ljb23_sift,");
-        list.add("ljb23_pp2hvar,");
-        list.add("clinvar_20190305,");
-        list.add("1000g2015aug_all,");
-        list.add("exac03,");
-        list.add("esp6500si_all ");
-        list.add("-operation ");
-        list.add("g,f,f,f,f,f,f ");
-        list.add("-nastring ");
-        list.add(". ");
-        list.add("-vcfinput ");
-        list.add("-polish ");
-        list.add("-xref ");
-        list.add("C:/annovar/example/gene_xref.txt");
+        StringBuilder protocols = new StringBuilder();
+        protocols.append("refGene,").
+                append("ljb23_sift,").
+                append("ljb23_pp2hvar,").
+                append("clinvar_20190305,").
+                append("1000g2015aug_all,").
+                append("exac03,").
+                append("esp6500si_all ");
 
-        String line = "";
+        StringBuilder line = new StringBuilder();
+        line.append(perlConfiguration.getCommand())
+                .append(" -protocol ")
+                .append(protocols)
+                .append(" -operation ")
+                .append("g,f,f,f,f,f,f ")
+                .append(" ")
+                .append(perlConfiguration.getUploadedPath())
+                .append(vcfName)
+                .append(" ")
+                .append(perlConfiguration.getAnnovarDB())
+                .append(" -outfile ")
+                .append(perlConfiguration.getConvertPath())
+                .append(saveName);
 
-        for (int i = 0; i < list.size(); i++) {
-            line += list.get(i);
-        }
+
         System.out.println(">>" + line);
-        CommandLine commandLine = CommandLine.parse(line);
+        CommandLine commandLine = CommandLine.parse(line.toString());
         Executor executor = new DefaultExecutor();
         try {
             executor.execute(commandLine);
@@ -178,60 +219,6 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
     }
 
-    private void tableAnnovarDBSelect(List<String> dbList, String vcfName, Long countConvertFile) {
-        String saveName = "";
-        if (countConvertFile > 0) {
-            saveName = vcfName + "(" + (countConvertFile + 1) + ")";
-        }
-
-        List<String> list = new ArrayList<>();
-        list.add("perl ");
-        list.add("C:/annovar/table_annovar.pl ");
-        list.add("C:/uploadedFile/" + vcfName + " ");
-        list.add("C:/annovar/humandb/ ");
-        list.add("-buildver ");
-        list.add("hg19 ");
-        list.add("-outfile ");
-        list.add("C:/convertFile/" + saveName + " ");
-        list.add("-remove ");
-        list.add(" ");
-        list.add("-nastring ");
-        list.add(". ");
-        list.add("-vcfinput ");
-        list.add("-polish ");
-        list.add("-xref ");
-        list.add("C:/annovar/example/gene_xref.txt ");
-        list.add("-protocol ");
-        for (int i = 0; i < dbList.size(); i++) {
-            list.add(dbList.get(i));
-            if (i != dbList.size() - 1) {
-                list.add(",");
-            }
-        }
-        list.add(" ");
-        list.add("-operation ");
-        for (int i = 0; i < dbList.size(); i++) {
-            list.add(dbList.get(i).equals("refGene") ? "g" : "f");
-            if (i != dbList.size() - 1) {
-                list.add(",");
-            }
-        }
-
-        String line = "";
-
-        for (int i = 0; i < list.size(); i++) {
-            line += list.get(i);
-        }
-        System.out.println(">>" + line);
-        CommandLine commandLine = CommandLine.parse(line);
-        Executor executor = new DefaultExecutor();
-        try {
-            executor.execute(commandLine);
-        } catch (Exception e) {
-            System.out.println("Exception : " + e.getMessage());
-        }
-
-    }
 
     private VcfLines getContent(List<String> fileContentList) {
 
@@ -273,6 +260,4 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
             throw new Exception("저장된 파일 없음");
         }
     }
-
-
 }
