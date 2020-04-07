@@ -33,7 +33,7 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
 
     public final NumberPath<Integer> personId = createNumber("personId", Integer.class);
 
-    public final EnumPath<SaveStatus> saveStatus = createEnum("saveStatus", SaveStatus.class);
+    public final DateTimePath<java.time.LocalDateTime> uploadedDate = createDateTime("uploadedDate", java.time.LocalDateTime.class);
 
     public QFileEntity(String variable) {
         super(FileEntity.class, forVariable(variable));

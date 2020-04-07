@@ -15,14 +15,11 @@ public class VcfValue {
     }
 
     public boolean isMatchedHeader(String dbSelect) {
-
         if (header.equalsIgnoreCase(dbSelect)) {
+            System.out.println(">>"+dbSelect);
             return true;
         }
-
         return false;
-
-
     }
 
     public boolean isMatchedValue(String comp, String condition) {

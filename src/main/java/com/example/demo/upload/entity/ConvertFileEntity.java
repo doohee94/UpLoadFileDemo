@@ -3,6 +3,8 @@ package com.example.demo.upload.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "convertFiles")
 @Getter
@@ -23,6 +25,9 @@ public class ConvertFileEntity {
 
     private String attachmentUrl;
 
+    private LocalDateTime annotatedDate;
+
+
     @Builder
     public ConvertFileEntity(FileEntity fileEntity, String inputFileName, Long countConvertFile) {
 
@@ -30,5 +35,6 @@ public class ConvertFileEntity {
         this.fileName = inputFileName;
         this.fileFakeName = fileEntity.getFileFakeName()+"("+(countConvertFile+1)+")"+".hg19_multianno.txt";
         this.attachmentUrl = "C:/convertFile/" + fileEntity.getFileFakeName() +"("+(countConvertFile+1)+")"+ ".hg19_multianno.txt";
+        this.annotatedDate = LocalDateTime.now();
     }
 }

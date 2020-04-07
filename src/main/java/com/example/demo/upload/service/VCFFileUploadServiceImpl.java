@@ -5,32 +5,37 @@ import com.example.demo.upload.PerlConfiguration;
 import com.example.demo.upload.common.PaginationUtil;
 import com.example.demo.upload.entity.ConvertFileEntity;
 import com.example.demo.upload.entity.FileEntity;
-import com.example.demo.upload.entity.dto.Cols;
 import com.example.demo.upload.entity.dto.Filter;
+import com.example.demo.upload.entity.dto.Header;
 import com.example.demo.upload.entity.dto.VcfLine;
 import com.example.demo.upload.entity.dto.VcfLines;
 import com.example.demo.upload.repository.ConvertFileRepository;
 import com.example.demo.upload.repository.FileUploadRepository;
-import com.example.demo.upload.repository.FileUploadRepositorySupport;
+import htsjdk.samtools.util.BufferedLineReader;
+import htsjdk.tribble.readers.AsciiLineReader;
+import htsjdk.tribble.readers.LineIteratorImpl;
+import htsjdk.tribble.readers.LineReader;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.vcf.VCFCodec;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.Executor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +56,14 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
     @Override
     public Page<FileEntity> VCFfileList(int personId, Pageable pageable) throws Exception {
-        return fileUploadRepository.findByPersonId(personId, pageable);
+        Page<FileEntity> list = fileUploadRepository.findByPersonId(personId, pageable);
+
+        for(FileEntity file : list){
+            Long countConvertFile = convertFileRepository.countByOriginFileidx(file.getFileIdx());
+            file.setAnalyzeCount(countConvertFile);
+        }
+
+        return list;
     }
 
     @Override
@@ -89,29 +101,121 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
     }
 
     @Override
-    public Page<?> getConvertFile(int fileIdx, Pageable pageable) throws Exception {
+    public Page<?> getConvertFile(int fileIdx, List<String>selectedHeaders,Pageable pageable) throws Exception {
 
         ConvertFileEntity convertFileEntity = convertFileRepository.findByFileIdx(fileIdx);
 
         Path path = Paths.get(convertFileEntity.getAttachmentUrl());
         List<String> fileContentList = Files.readAllLines(path);
 
-        VcfLines list = getContent(fileContentList);
+        VcfLines list = getContent(fileContentList,selectedHeaders);
 
         return list.convertPagination(pageable);
     }
 
     @Override
-    public Page<?> getFilteredList(List<Filter> filterList, int fileIdx, Pageable pageable) throws Exception {
+    public Page<?> getFilteredList(List<Filter> filterList,List<String>selectedHeaders,int fileIdx, Pageable pageable) throws Exception {
 
         ConvertFileEntity convertFileEntity = convertFileRepository.findByFileIdx(fileIdx);
 
         Path path = Paths.get(convertFileEntity.getAttachmentUrl());
         List<String> fileContentList = Files.readAllLines(path);
 
-        VcfLines list = getContent(fileContentList);
+        VcfLines list = getContent(fileContentList,selectedHeaders);
 
         return PaginationUtil.convertListToPage(list.filter(filterList), pageable);
+    }
+
+    @Override
+    public Page<?> getBasicInfo(int vcfFileIdx, List<String> selectedHeaders,Pageable pageable) throws Exception {
+
+        FileEntity fileEntity = fileUploadRepository.findByFileIdx(vcfFileIdx);
+
+        InputStream inputStream = new FileInputStream(fileEntity.getAttachmentUrl());
+
+        BufferedLineReader br = new BufferedLineReader(inputStream);
+        AsciiLineReader ar = new AsciiLineReader(inputStream);
+        LineReader lr2 = ar;
+        LineIteratorImpl t = new LineIteratorImpl(lr2);
+
+        VCFCodec codec = new VCFCodec();
+        codec.readActualHeader(t);
+        VariantContext ctx = null;
+
+        VcfLines vcfLines = new VcfLines();
+        String []headers = {"Chr","Start","End","Ref","Alt","TCGA_CODE","TVAF","TDP","TAL"};
+        List<String> header =Arrays.asList(headers);
+
+        while (t.hasNext()) {
+            ctx = codec.decode(t.next());
+
+            List<String> temp = new ArrayList<>();
+            temp.add(ctx.getContig());
+            temp.add(String.valueOf(ctx.getStart()));
+            temp.add(String.valueOf(ctx.getEnd()));
+            temp.add(ctx.getGenotypes().get(0).getAllele(0).getBaseString());
+            temp.add(ctx.getGenotypes().get(0).getAllele(1).getBaseString());
+            temp.add(ctx.getAttributes().get("TCGA_CODE").toString());
+            temp.add(ctx.getAttributes().get("TVAF").toString());
+            temp.add(ctx.getAttributes().get("TDP").toString());
+            temp.add(ctx.getAttributes().get("TAL").toString().replace("[","").replace("]","").replace(" ",""));
+
+            VcfLine vcfLine = new VcfLine(header, temp,selectedHeaders);
+            vcfLines.add(vcfLine);
+        }
+        br.close();
+
+        return vcfLines.convertPagination(pageable);
+    }
+
+    @Override
+    public Page<?> getSelectByHeader(int convertFileIdx,List<String> selectedHeaders, Pageable pageable) throws Exception {
+        ConvertFileEntity convertFileEntity = convertFileRepository.findByFileIdx(convertFileIdx);
+
+        Path path = Paths.get(convertFileEntity.getAttachmentUrl());
+        List<String> fileContentList = Files.readAllLines(path);
+        VcfLines list = getFilterHeaderContent(fileContentList, selectedHeaders);
+
+        return list.convertPagination(pageable);
+    }
+
+    @Override
+    public List<Header> getBasicInfoHeader(List<String> selectedHeaders, Pageable pageable) throws Exception {
+        List<Header> list = new ArrayList<>();
+        for(int i=0; i<selectedHeaders.size(); i++){
+            Header header = new Header(selectedHeaders.get(i));
+            list.add(header);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Header> getHeaders(int convertFileIdx, List<String> selectedHeaders, Pageable pageable) throws Exception {
+        ConvertFileEntity convertFileEntity = convertFileRepository.findByFileIdx(convertFileIdx);
+
+        Path path = Paths.get(convertFileEntity.getAttachmentUrl());
+        List<String> fileContentList = Files.readAllLines(path);
+        List<String> headers = new ArrayList<>();
+        headers.addAll(Arrays.asList(fileContentList.get(0).split("\t")));
+        headers.add("TCGA_CODE");
+        headers.add("TVAF");
+        headers.add("TDP");
+        headers.add("TAL");
+
+        List<Header> list = new ArrayList<>();
+
+        for(int i=0; i<headers.size(); i++){
+            Header tempHeader = new Header(headers.get(i), false);
+            for(int j=0; j<selectedHeaders.size(); j++){
+                if(headers.get(i).equals(selectedHeaders.get(j))){
+                    tempHeader.setChecked(true);
+                    break;
+                }
+            }// end for j
+            list.add(tempHeader);
+        }// end for i
+
+        return list;
     }
 
     /**
@@ -120,10 +224,7 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
     private void tableAnnovarDBSelect(List<String> dbList, String vcfName, Long countConvertFile) {
 
-        String saveName = "";
-        if (countConvertFile > 0) {
-            saveName = vcfName + "(" + (countConvertFile + 1) + ")";
-        }
+        String saveName =  vcfName + "(" + (countConvertFile + 1) + ")";
 
         StringBuilder protocols = new StringBuilder();
         StringBuilder operations = new StringBuilder();
@@ -152,7 +253,6 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
                 .append(perlConfiguration.getConvertPath())
                 .append(saveName);
 
-
         System.out.println(">>" + line.toString());
         CommandLine commandLine = CommandLine.parse(line.toString());
 
@@ -168,11 +268,7 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
 
     private void tableAnnovar(String vcfName, Long countConvertFile) {
 
-        String saveName = "";
-        if (countConvertFile > 0) {
-            saveName = vcfName + "(" + (countConvertFile + 1) + ")";
-        }
-
+        String saveName =  vcfName + "(" + (countConvertFile + 1) + ")";
 
         StringBuilder protocols = new StringBuilder();
         protocols.append("refGene,").
@@ -212,7 +308,7 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
     }
 
 
-    private VcfLines getContent(List<String> fileContentList) {
+    private VcfLines getContent(List<String> fileContentList,List<String>selectedHeaders) {
 
         VcfLines list = new VcfLines();
         List<String> headers = Arrays.asList(fileContentList.get(0).split("\t"));
@@ -220,21 +316,30 @@ public class VCFFileUploadServiceImpl implements VCFFileUploadService {
         for (int i = 1; i < fileContentList.size(); i++) {
 
             List<String> temp = Arrays.asList(fileContentList.get(i).split("\t"));
-            VcfLine vcfLine = new VcfLine(headers, temp);
+            VcfLine vcfLine = new VcfLine(headers, temp, selectedHeaders);
 
             list.add(vcfLine);
         }//end for
         return list;
     }
 
+    private VcfLines getFilterHeaderContent(List<String> fileContentList, List<String> selectedHeaders){
+        VcfLines list = new VcfLines();
+        List<String> headers = Arrays.asList(fileContentList.get(0).split("\t"));
+        for (int i = 1; i < fileContentList.size(); i++) {
+
+            List<String> temp = Arrays.asList(fileContentList.get(i).split("\t"));
+            VcfLine vcfLine = new VcfLine(headers, temp, selectedHeaders);
+
+            list.add(vcfLine);
+        }//end for
+
+        return list;
+    }
+
     //생성된 파일 삭제
     private void deleteFiles(String fakeName, Long countConvertFile) throws Exception {
-
-        String saveName = "";
-        if (countConvertFile > 0) {
-            saveName = fakeName + "(" + (countConvertFile + 1) + ")";
-        }
-
+        String saveName =  fakeName + "(" + (countConvertFile + 1) + ")";
 
         File deleteVcf = new File("C:/convertFile/" + saveName + ".hg19_multianno.vcf");
         File deleteAvinput = new File("C:/convertFile/" + saveName + ".avinput");

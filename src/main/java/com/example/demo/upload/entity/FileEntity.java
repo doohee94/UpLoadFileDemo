@@ -1,16 +1,13 @@
 package com.example.demo.upload.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.persistence.*;
-import java.util.Optional;
+import java.time.LocalDateTime;
+
 
 
 @Entity
@@ -38,19 +35,24 @@ public class FileEntity {
 
     private String attachmentUrl;
 
-    @Enumerated(EnumType.STRING)
-    private SaveStatus saveStatus;
+    private LocalDateTime uploadedDate;
+
+    @Transient
+    private Long analyzeCount;
+//    private String status;
 
 
     @Builder
     public FileEntity(MultipartFile file) {
+
         this.personId = ((int) (Math.random() * 10) + 1);
         this.fileName = file.getOriginalFilename();
         this.fileFakeName = RandomStringUtils.randomAlphanumeric(32) + ".vcf";
         this.fileSize = file.getSize();
         this.fileContentType = file.getContentType();
         this.attachmentUrl = "C:/uploadedFile/" + this.fileFakeName;
-        this.saveStatus = SaveStatus.UPLOADED;
+        this. uploadedDate =  LocalDateTime.now();
+//        this.status = "";
     }
 
     public void isValdateExtension() {

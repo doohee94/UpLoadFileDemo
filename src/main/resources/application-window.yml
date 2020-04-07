@@ -1,0 +1,9 @@
+perl:
+  command: perl C:/annovar/table_annovar.pl -remove  -nastring . -vcfinput -polish -xref C:/annovar/example/gene_xref.txt
+  annovarDB: C:/annovar/humandb/ -buildver hg19
+  uploadedPath: C:/uploadedFile/
+  convertPath: C:/convertFile/
+
+spring:
+  profiles:
+    active: window

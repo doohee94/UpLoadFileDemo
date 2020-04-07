@@ -1,38 +1,11 @@
 package com.example.demo.upload.controller;
 
-import com.example.demo.upload.entity.PersonEntity;
-import com.example.demo.upload.entity.SaveStatus;
-import com.example.demo.upload.service.FileUploadService;
-import htsjdk.samtools.util.BufferedLineReader;
-import htsjdk.tribble.readers.AsciiLineReader;
-import htsjdk.tribble.readers.LineIteratorImpl;
-import htsjdk.variant.variantcontext.VariantContext;
-import htsjdk.variant.vcf.VCFCodec;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.*;
-import java.util.*;
-
-import com.example.demo.upload.entity.FileEntity;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class UploadFileController {
-
-    @Autowired
-    FileUploadService fileUploadService;
 
     @RequestMapping(value = "/")
     public String openIndex() throws Exception {
