@@ -6,6 +6,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -35,10 +36,8 @@ public class FileEntity {
 
     private String attachmentUrl;
 
-    private LocalDateTime uploadedDate;
+    private LocalDate uploadedDate;
 
-    @Transient
-    private Long analyzeCount;
 //    private String status;
 
 
@@ -51,7 +50,7 @@ public class FileEntity {
         this.fileSize = file.getSize();
         this.fileContentType = file.getContentType();
         this.attachmentUrl = "C:/uploadedFile/" + this.fileFakeName;
-        this. uploadedDate =  LocalDateTime.now();
+        this. uploadedDate =  LocalDate.now();
 //        this.status = "";
     }
 

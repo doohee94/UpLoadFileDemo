@@ -2,8 +2,6 @@ package com.example.demo.upload.entity.dto;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class Header {
 

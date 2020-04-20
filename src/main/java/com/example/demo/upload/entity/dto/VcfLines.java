@@ -27,11 +27,11 @@ public class VcfLines {
         return PaginationUtil.convertListToPage(vcfLines, pageable);
     }
 
-    public List<VcfLine> filter(List<Filter> filterList) {
+    public List<VcfLine> filter(FilterList filterList) {
 
-        if(filterList.size() == 0) return vcfLines;
+        if(filterList.convertFilters().isEmpty()) return vcfLines;
 
-        for (Filter filter : filterList) {
+        for (Filter filter : filterList.convertFilters()) {
             vcfLines =  vcfLines.stream().filter(vcfLine -> vcfLine.isFiltered(filter)).collect(Collectors.toList());
         }
 

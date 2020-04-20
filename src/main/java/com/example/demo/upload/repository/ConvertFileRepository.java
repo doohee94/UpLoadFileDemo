@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ConvertFileRepository extends JpaRepository<ConvertFileEntity,Integer> {
     Long countByOriginFileidx(int fileIdx);
-    Page<ConvertFileEntity> findAllByOriginFileidx(int fileIdx, Pageable pageable);
+    ConvertFileEntity findByOriginFileidx(int originFileidx);
+
     ConvertFileEntity findByFileIdx(int fileIdx);
 }

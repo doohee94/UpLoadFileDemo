@@ -16,13 +16,16 @@ public class VcfValue {
 
     public boolean isMatchedHeader(String dbSelect) {
         if (header.equalsIgnoreCase(dbSelect)) {
-            System.out.println(">>"+dbSelect);
             return true;
         }
         return false;
     }
 
     public boolean isMatchedValue(String comp, String condition) {
+
+        if(condition.equals("~="))
+            return this.value.startsWith(comp);
+
         if (condition.equals("="))
             return comp.equalsIgnoreCase(this.value);
 
